@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+use machbarmacher\GdprDump\Command\DumpCommand;
+use Symfony\Component\Console\Application;
+
+$dir = realpath(__DIR__);
+$autoloaderLocations = ["$dir/vendor/autoload.php", "$dir/../../vendor/autoload.php",];
+foreach ($autoloaderLocations as $autoloaderLocation) {
+  if (file_exists($autoloaderLocation)) {
+    require $autoloaderLocation;
+  }
+}
+
+$app = new Application('myapp', '1.0 (stable)');
+$command = new DumpCommand();
+$app->add($command);
+$app->setDefaultCommand($command->getName(), TRUE);
+$app->run();

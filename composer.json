@@ -1,0 +1,25 @@
+{
+  "name": "machbarmacher/gdpr-dump",
+  "description": "A drop-in replacement for mysqldump that optionally sanitizes DB fields for better GDPR conformity.",
+  "require": {
+    "symfony/console": "^3.0",
+    "ifsnop/mysqldump-php": "^2.4"
+  },
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Axel Rutz",
+      "email": "axel.rutz@machbarmacher.net"
+    }
+  ],
+  "bin": [
+    "mysqldump"
+  ],
+  "autoload": {
+    "psr-4": {
+      "machbarmacher\\GdprDump\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
