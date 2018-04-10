@@ -9,16 +9,13 @@ class MysqldumpGdpr extends Mysqldump {
   /** @var [string][string]string */
   protected $gdprExpressions;
 
-  /**
-   * Set GDPR expressions.
-   *
-   * @param [string][string]string $gdprExpressions
-   *   Array of SQL expressions, keyed by table and column name.
-   */
-  public function setGdprExpressions($gdprExpressions) {
-    $this->gdprExpressions = $gdprExpressions;
+  public function __construct($dsn = '', $user = '', $pass = '', array $dumpSettings = array(), array $pdoSettings = array()) {
+    if (isset($dumpSettings['gdpr-expressions'])) {
+      $this->gdprExpressions = $dumpSettings['gdpr-expressions'];
+      unset($dumpSettings['gdpr-expressions']);
+    }
+    parent::__construct($dsn, $user, $pass, $dumpSettings, $pdoSettings);
   }
-
 
   public function getColumnStmt($tableName) {
     $columnStmt = parent::getColumnStmt($tableName);

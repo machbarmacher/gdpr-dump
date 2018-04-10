@@ -55,6 +55,7 @@ class DumpCommand extends Command {
       ->addOption('skip-dump-date', NULL, InputOption::VALUE_NONE, 'Skip dump date to better compare dumps.')
       ->addOption('skip-definer', NULL, InputOption::VALUE_NONE, 'Omit DEFINER and SQL SECURITY clauses from the CREATE statements for views and stored programs.')
       ->addOption('where', NULL, InputOption::VALUE_OPTIONAL, 'Dump only rows selected by given WHERE condition.')
+      ->addOption('gdpr-expressions', NULL, InputOption::VALUE_OPTIONAL, 'Add a json of gdpr sql-expressions keyed by table and column.')
       // This seems NOT to work as documented.
       //->addOption('databases', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Dump several databases. Normally, mysqldump treats the first name argument on the command line as a database name and following names as table names. With this option, it treats all name arguments as database names.')
     ;
@@ -69,6 +70,9 @@ class DumpCommand extends Command {
       + $this->getDefaults($input->getOption('defaults-extra-file'))
       + $input->getArguments()
       + $input->getOptions();
+    if (!empty($dumpSettings['gdpr-expressions'])) {
+      $dumpSettings['gdpr-expressions'] = json_decode($dumpSettings['gdpr-expressions']);
+    }
     $dumpSettings = array_intersect_key($dumpSettings, $this->getDumpSettingsDefault());
     $pdoSettings = [];
     $dumper = new MysqldumpGdpr($dsn, $user, $password, $dumpSettings, $pdoSettings);
