@@ -71,7 +71,7 @@ class DumpCommand extends Command {
       + $input->getArguments()
       + $input->getOptions();
     if (!empty($dumpSettings['gdpr-expressions'])) {
-      $dumpSettings['gdpr-expressions'] = json_decode($dumpSettings['gdpr-expressions']);
+      $dumpSettings['gdpr-expressions'] = json_decode($dumpSettings['gdpr-expressions'], TRUE);
     }
     $dumpSettings = array_intersect_key($dumpSettings, $this->getDumpSettingsDefault());
     $pdoSettings = [];
@@ -163,6 +163,8 @@ class DumpCommand extends Command {
       'where' => '',
       /* deprecated */
       'disable-foreign-keys-check' => TRUE
+    ) + array(
+        'gdpr-expressions' => NULL,
     );
   }
 }

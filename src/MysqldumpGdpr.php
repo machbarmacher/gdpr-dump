@@ -10,7 +10,7 @@ class MysqldumpGdpr extends Mysqldump {
   protected $gdprExpressions;
 
   public function __construct($dsn = '', $user = '', $pass = '', array $dumpSettings = array(), array $pdoSettings = array()) {
-    if (isset($dumpSettings['gdpr-expressions'])) {
+    if (array_key_exists('gdpr-expressions', $dumpSettings)) {
       $this->gdprExpressions = $dumpSettings['gdpr-expressions'];
       unset($dumpSettings['gdpr-expressions']);
     }
