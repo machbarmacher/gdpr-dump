@@ -29,7 +29,8 @@ class MysqldumpGdpr extends Mysqldump {
     $columnTypes = $this->tableColumnTypes()[$tableName];
     foreach (array_keys($columnTypes) as $i => $columnName) {
       if (!empty($this->gdprExpressions[$tableName][$columnName])) {
-        $columnStmt[$i] = $this->gdprExpressions[$tableName][$columnName];
+        $expression = $this->gdprExpressions[$tableName][$columnName];
+        $columnStmt[$i] = "$expression as $columnName";
       }
     }
     if ($this->debugSql) {
