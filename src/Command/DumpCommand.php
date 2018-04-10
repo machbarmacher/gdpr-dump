@@ -28,7 +28,7 @@ class DumpCommand extends Command {
       ->addOption('port', 'P', InputOption::VALUE_OPTIONAL, 'The connection port number.')
       ->addOption('socket', 's', InputOption::VALUE_OPTIONAL, 'The connection socket.')
       ->addOption('db-type', NULL, InputOption::VALUE_OPTIONAL, 'The connection DB type. Options are: mysql (default), pgsql, sqlite, dblib.', 'mysql')
-      ->addOption('defaults-extra-file', NULL, InputOption::VALUE_OPTIONAL, 'An additional my.cnf file.')
+      ->addOption('defaults-file', NULL, InputOption::VALUE_OPTIONAL, 'An additional my.cnf file.')
       ->addOption('compress', NULL, InputOption::VALUE_OPTIONAL, 'Options: Gzip, Bzip2. Defaults to None.', 'None')
       ->addOption('init_commands', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'DB Init commands.')
       ->addOption('no-data', NULL, InputOption::VALUE_NONE, 'Do not dump table contents.')
@@ -68,7 +68,7 @@ class DumpCommand extends Command {
     $dsn = $this->getDsn($input);
     $dumpSettings =
       $this->getXDefaults($input->getOption('x-defaults'))
-      + $this->getDefaults($input->getOption('defaults-extra-file'))
+      + $this->getDefaults($input->getOption('defaults-file'))
       + $input->getArguments()
       + $input->getOptions();
     if (!empty($dumpSettings['gdpr-expressions'])) {
