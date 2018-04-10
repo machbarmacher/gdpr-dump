@@ -55,7 +55,8 @@ class DumpCommand extends Command {
       ->addOption('skip-dump-date', NULL, InputOption::VALUE_NONE, 'Skip dump date to better compare dumps.')
       ->addOption('skip-definer', NULL, InputOption::VALUE_NONE, 'Omit DEFINER and SQL SECURITY clauses from the CREATE statements for views and stored programs.')
       ->addOption('where', NULL, InputOption::VALUE_OPTIONAL, 'Dump only rows selected by given WHERE condition.')
-      ->addOption('gdpr-expressions', NULL, InputOption::VALUE_OPTIONAL, 'Add a json of gdpr sql-expressions keyed by table and column.')
+      ->addOption('gdpr-expressions', NULL, InputOption::VALUE_OPTIONAL, 'A json of gdpr sql-expressions keyed by table and column.')
+      ->addOption('debug-sql', NULL, InputOption::VALUE_NONE, 'Add a comment with the dump sql.')
       // This seems NOT to work as documented.
       //->addOption('databases', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Dump several databases. Normally, mysqldump treats the first name argument on the command line as a database name and following names as table names. With this option, it treats all name arguments as database names.')
     ;
@@ -165,6 +166,7 @@ class DumpCommand extends Command {
       'disable-foreign-keys-check' => TRUE
     ) + array(
         'gdpr-expressions' => NULL,
+        'debug-sql' => FALSE,
     );
   }
 }
