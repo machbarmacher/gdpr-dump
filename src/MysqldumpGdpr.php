@@ -33,7 +33,7 @@ class MysqldumpGdpr extends Mysqldump {
       }
     }
     if ($this->debugSql) {
-      print "/* SELECT " . implode(",", $columnStmt) . " FROM `$tableName` */";
+      print "/* SELECT " . implode(",", $columnStmt) . " FROM `$tableName` */\n\n";
     }
     return $columnStmt;
   }
