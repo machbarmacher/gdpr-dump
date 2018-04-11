@@ -20,7 +20,6 @@ class DumpCommand extends Command {
       ->addArgument('db-name', InputArgument::REQUIRED, 'DB name.')
       ->addArgument('include-tables', InputArgument::OPTIONAL|InputArgument::IS_ARRAY, 'Only include these tables, include all if empty')
       ->addOption('exclude-tables', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Exclude these tables, include all if empty, supports regexps')
-      ->addOption('x-defaults', NULL, InputOption::VALUE_NONE, 'Implies --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.')
       ->addOption('result-file', 'r', InputOption::VALUE_OPTIONAL, 'Implies --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.')
       ->addOption('user', 'u', InputOption::VALUE_OPTIONAL, 'The connection user name.')
       ->addOption('password', 'p', InputOption::VALUE_OPTIONAL, 'The connection password.')
@@ -59,6 +58,9 @@ class DumpCommand extends Command {
       ->addOption('debug-sql', NULL, InputOption::VALUE_NONE, 'Add a comment with the dump sql.')
       // This seems NOT to work as documented.
       //->addOption('databases', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Dump several databases. Normally, mysqldump treats the first name argument on the command line as a database name and following names as table names. With this option, it treats all name arguments as database names.')
+      // Add some options that e.g. drush expects.
+      ->addOption('quote-names', 'Q', InputOption::VALUE_NONE, 'Currently ignored.')
+      ->addOption('opts', NULL, InputOption::VALUE_NONE, 'Implies --add-drop-table --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.')
     ;
   }
 
@@ -67,7 +69,7 @@ class DumpCommand extends Command {
     $password = $input->getOption('password');
     $dsn = $this->getDsn($input);
     $dumpSettings =
-      $this->getXDefaults($input->getOption('x-defaults'))
+      $this->getOptOptions($input->getOption('opts'))
       + $this->getDefaults($input->getOption('defaults-file'))
       + $input->getArguments()
       + $input->getOptions();
@@ -119,14 +121,20 @@ class DumpCommand extends Command {
     return $dsn;
   }
 
-  protected function getXDefaults($switch) {
+  protected function getOptOptions($switch) {
     return !$switch ? [] : [
+      'add-drop-table' => TRUE,
       'add-locks' => TRUE,
+      // --create-options
       'disable-keys' => TRUE,
       'extended-insert' => TRUE,
-      'hex-blob' => TRUE,
-      'no-autocommit' => TRUE,
-      'single-transaction' => TRUE,
+      'lock-tables' => TRUE,
+      // --quick
+      // --set-charset
+      // --------------
+      // 'hex-blob' => TRUE,
+      // 'no-autocommit' => TRUE,
+      // 'single-transaction' => TRUE,
     ];
   }
 
