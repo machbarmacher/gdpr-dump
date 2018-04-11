@@ -60,7 +60,7 @@ class DumpCommand extends Command {
       //->addOption('databases', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Dump several databases. Normally, mysqldump treats the first name argument on the command line as a database name and following names as table names. With this option, it treats all name arguments as database names.')
       // Add some options that e.g. drush expects.
       ->addOption('quote-names', 'Q', InputOption::VALUE_NONE, 'Currently ignored.')
-      ->addOption('opts', NULL, InputOption::VALUE_NONE, 'Implies --add-drop-table --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.')
+      ->addOption('opt', NULL, InputOption::VALUE_NONE, 'Implies --add-drop-table --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.')
     ;
   }
 
@@ -69,7 +69,7 @@ class DumpCommand extends Command {
     $password = $input->getOption('password');
     $dsn = $this->getDsn($input);
     $dumpSettings =
-      $this->getOptOptions($input->getOption('opts'))
+      $this->getOptOptions($input->getOption('opt'))
       + $this->getDefaults($input->getOption('defaults-file'))
       + $input->getArguments()
       + $input->getOptions();
