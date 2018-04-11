@@ -12,7 +12,7 @@ namespace machbarmacher\GdprDump;
 class ConfigParser {
 
   /** @var array */
-  private $config;
+  private $config = [];
 
   /**
    * @return array
@@ -36,18 +36,18 @@ class ConfigParser {
   public function addConfig($configString) {
     $lines = preg_split('/\R/mu', $configString);
     // This is too lax but good enough.
-    $keyRE = '[a-zA-Z0-9_-]';
+    $keyRE = '[a-zA-Z0-9_-]+';
     $sections = [];
     $currentSection = 'NONE';
     $success = array_walk($lines, function ($line) use (&$sections, &$currentSection, $keyRE) {
       if (preg_match("/^\s*\\[($keyRE)\\]\s*$/u", $line, $m)) {
         $currentSection = $m[1];
       }
-      elseif (preg_match("^/\s*($keyRE)\s*=\s*(.*)$/u", $line, $m)) {
-        $key = $m[0];
-        $value = $m[1];
+      elseif (preg_match("/^\s*($keyRE)\s*=\s*(.*)$/u", $line, $m)) {
+        $key = $m[1];
+        $value = $m[2];
         $value = strtr($value, ['\b' => chr(8), '\t' => "\t", '\n' => "\n", '\r' => "\r", '\s' => ' ', '\\\\' => '\\']);
-        if (preg_match('/".*?"(\s*#.*)/u', $value, $m) || preg_match('/\'.*?\'(\s*#.*)/u', $value, $m)) {
+        if (preg_match('/^"(.*?)"(\s*#.*)?$/u', $value, $m) || preg_match('^/\'(.*?)\'(\s*#.*)?$/u', $value, $m)) {
           $value = $m[1];
         }
         $sections[$currentSection][$key] = $value;
@@ -56,7 +56,7 @@ class ConfigParser {
     if (!$success) {
       throw new \LogicException('Error parsing config sections.');
     }
-    array_replace_recursive($this->config, $sections);
+    $this->config = array_replace_recursive($this->config, $sections);
   }
 
   public function addFile($file) {

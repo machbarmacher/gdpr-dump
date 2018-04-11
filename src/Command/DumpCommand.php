@@ -65,14 +65,15 @@ class DumpCommand extends Command {
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $user = $input->getOption('user');
-    $password = $input->getOption('password');
-    $dsn = $this->getDsn($input);
     $dumpSettings =
       $this->getOptOptions($input->getOption('opt'))
       + $this->getDefaults($input->getOption('defaults-file'))
-      + $input->getArguments()
-      + $input->getOptions();
+      + array_filter($input->getArguments())
+      + array_filter($input->getOptions())
+      + array_fill_keys(['user', 'password', 'host', 'port', 'socket', 'db-name', 'db-type'], NULL);
+    $user = $dumpSettings['user'];
+    $password = $dumpSettings['password'];
+    $dsn = $this->getDsn($dumpSettings);
     if (!empty($dumpSettings['gdpr-expressions'])) {
       $dumpSettings['gdpr-expressions'] = json_decode($dumpSettings['gdpr-expressions'], TRUE);
     }
@@ -102,12 +103,12 @@ class DumpCommand extends Command {
     return $config->getFiltered(['client', 'mysqldump']);
   }
 
-  protected function getDsn(InputInterface $input) {
-    $dbName = $input->getArgument('db-name');
-    $dbType = $input->getOption('db-type');
-    $host = $input->getOption('host');
-    $port = $input->getOption('port');
-    $socket = $input->getOption('socket');
+  protected function getDsn(array $dumpSettings) {
+    $dbName = $dumpSettings['db-name'];
+    $dbType = $dumpSettings['db-type'];
+    $host = $dumpSettings['host'];
+    $port = $dumpSettings['port'];
+    $socket = $dumpSettings['socket'];
     $dsn = "$dbType:dbname=$dbName";
     if ($host) {
       $dsn .= ";host=$host";
