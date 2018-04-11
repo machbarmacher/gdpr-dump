@@ -46,7 +46,7 @@ Drush example:
 $ export PATH=/var/www/html/vendor/bin:$PATH
 $ which mysqldump
 /var/www/html/vendor/bin/mysqldump
-$ drush sql-dump --tables-list=users_field_data --extra-dump=$'--gdpr-expressions=\'{"users_field_data":{"name":"uid","mail":"uid","pass":"\\"\\""}}\' --debug-sql' -v
+$ drush sql-dump --tables-list=users_field_data --extra-dump=$'--gdpr-expressions=\'{"users_field_data":{"name":"uid","mail":"uid","init":"uid","pass":"\\"\\""}}\' --debug-sql'
 ```
 
 ## Status and further development
