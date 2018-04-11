@@ -8,7 +8,7 @@ and can in principle dump any database that PDO supports.
 ## How to use
 
 ```
-$ ../vendor/bin/mysqldump drupal --host=mariadb --user=drupal --password=EEmnKMSWVS6dKCni users_field_data --gdpr-expressions='{"users_field_data":{"name":"uid","mail":"uid","pass":"\"\""}}' --debug-sql
+$ ../vendor/bin/mysqldump drupal --host=mariadb --user=drupal --password=xxxxxxxx users_field_data --gdpr-expressions='{"users_field_data":{"name":"uid","mail":"uid","pass":"\"\""}}' --debug-sql
 ...
 --
 -- Dumping data for table `users_field_data`
@@ -26,7 +26,7 @@ Note that we use `uid` expression to satisfy unique keys.
 The same without obfuscation:
 
 ```
-$ ../vendor/bin/mysqldump drupal --host=mariadb --user=drupal --password=EEmnKMSWVS6dKCni users_field_data --debug-sql
+$ ../vendor/bin/mysqldump drupal --host=mariadb --user=drupal --password=xxxxxxxx users_field_data --debug-sql
 ...
 --
 -- Dumping data for table `users_field_data`
