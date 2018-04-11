@@ -76,6 +76,9 @@ class DumpCommand extends Command {
     $dsn = $this->getDsn($dumpSettings);
     if (!empty($dumpSettings['gdpr-expressions'])) {
       $dumpSettings['gdpr-expressions'] = json_decode($dumpSettings['gdpr-expressions'], TRUE);
+      if (json_last_error()) {
+        throw new \UnexpectedValueException(sprintf('Invalid gdpr-expressions json (%s): %s', json_last_error_msg(), $dumpSettings['gdpr-expressions']));
+      }
     }
     $dumpSettings = array_intersect_key($dumpSettings, $this->getDumpSettingsDefault());
     $pdoSettings = [];
