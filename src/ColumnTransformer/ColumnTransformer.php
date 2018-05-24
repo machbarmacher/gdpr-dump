@@ -2,6 +2,7 @@
 
 namespace machbarmacher\GdprDump\ColumnTransformer;
 
+
 abstract class ColumnTransformer {
 
     public static function create($tableName, $columnName, $expression) {
