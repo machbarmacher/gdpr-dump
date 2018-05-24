@@ -38,4 +38,35 @@ class MysqldumpGdpr extends Mysqldump {
     }
     return $columnStmt;
   }
+
+  /**
+   * helps with structuring the gdpr-expression data slightly
+   * The default behaviour is to assume that we're looking at a simple expression
+   * However, if we allow the structure to be slightly thicker, we're able to add
+   * faker commands
+   */
+  protected function getGDPRExpression($tableName, $columnName) {
+    if(!empty($this->gdprExpressions[$tableName][$columnName])) {
+      $gdprTransformationData = $this->gdprExpressions[$tableName][$columnName];
+      if(\is_object($gdprTransformationData)) {
+
+      } else {
+        return $gdprTransformationData;
+      }
+    }
+  }
+
+  proteced function getTranformation($expression) {
+      return $expression;
+}
+
+  /**
+   * Here, instead of changing the expression itself, changing the output
+   */
+  protected function hookTransformColumnValue($tableName, $colName, $colValue)
+  {
+    
+  }
+
+
 }

@@ -3,8 +3,9 @@
   "description": "A drop-in replacement for mysqldump that optionally sanitizes DB fields for better GDPR conformity.",
   "require": {
     "symfony/console": "^3.0",
-    "ifsnop/mysqldump-php": "^2.4",
-    "cweagans/composer-patches": "^1.6"
+    "ifsnop/mysqldump-php": "dev-master",
+    "cweagans/composer-patches": "^1.6",
+    "fzaninotto/faker": "^1.7"
   },
   "license": "GPL-2.0-or-later",
   "authors": [
