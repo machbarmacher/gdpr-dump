@@ -28,7 +28,7 @@ class MysqldumpGdpr extends Mysqldump {
     $columnStmt = parent::getColumnStmt($tableName);
     $columnTypes = $this->tableColumnTypes()[$tableName];
     foreach (array_keys($columnTypes) as $i => $columnName) {
-      if (!empty($this->gdprExpressions[$tableName][$columnName])) {
+      if (!empty($this->getGDPRExpression($tableName, $columnName))) {
         $expression = $this->gdprExpressions[$tableName][$columnName];
         $columnStmt[$i] = "$expression as $columnName";
       }
@@ -49,16 +49,12 @@ class MysqldumpGdpr extends Mysqldump {
     if(!empty($this->gdprExpressions[$tableName][$columnName])) {
       $gdprTransformationData = $this->gdprExpressions[$tableName][$columnName];
       if(\is_object($gdprTransformationData)) {
-
+          return $gdprTransformationData;
       } else {
-        return $gdprTransformationData;
+          return $gdprTransformationData;
       }
     }
   }
-
-  proteced function getTranformation($expression) {
-      return $expression;
-}
 
   /**
    * Here, instead of changing the expression itself, changing the output
