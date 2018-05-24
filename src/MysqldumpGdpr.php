@@ -54,6 +54,7 @@ class MysqldumpGdpr extends Mysqldump {
           return $gdprTransformationData;
       }
     }
+    return $this->gdprExpressions[$tableName][$columnName];
   }
 
   /**
@@ -61,7 +62,7 @@ class MysqldumpGdpr extends Mysqldump {
    */
   protected function hookTransformColumnValue($tableName, $colName, $colValue)
   {
-    
+      return $colValue;
   }
 
 
