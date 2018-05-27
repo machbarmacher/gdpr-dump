@@ -4,6 +4,7 @@ namespace machbarmacher\GdprDump;
 
 use Ifsnop\Mysqldump\Mysqldump;
 use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
+use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformFaker;
 use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformSelectStatement;
 
 class MysqldumpGdpr extends Mysqldump
@@ -39,10 +40,11 @@ class MysqldumpGdpr extends Mysqldump
         $columnTypes = $this->tableColumnTypes()[$tableName];
         foreach (array_keys($columnTypes) as $i => $columnName) {
             $expression = $this->gdprExpressions[$tableName][$columnName];
-            if(!empty($expression)) {
-                $transformer = ColumnTransformer::create($tableName, $columnName,
+            if (!empty($expression)) {
+                $transformer = ColumnTransformer::create($tableName,
+                  $columnName,
                   $expression);
-                if($transformer instanceof ColumnTransformSelectStatement) {
+                if ($transformer instanceof ColumnTransformSelectStatement) {
                     $columnStmt[$i] = $transformer->getValue() . " as $columnName";
                 }
             }
@@ -78,8 +80,14 @@ class MysqldumpGdpr extends Mysqldump
      */
     protected function hookTransformColumnValue($tableName, $colName, $colValue)
     {
+        if (!empty($this->gdprExpressions[$tableName][$colName])) {
+            $transformer = ColumnTransformer::create($tableName, $colName,
+              $this->gdprExpressions[$tableName][$colName]);
+            if ($transformer instanceof ColumnTransformFaker) {
+                return $transformer->getValue();
+            }
+        }
         return $colValue;
     }
-
 
 }

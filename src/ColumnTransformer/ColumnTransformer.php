@@ -12,7 +12,7 @@ abstract class ColumnTransformer
 
     public static function create($tableName, $columnName, $expression)
     {
-        if (is_array($expression)) {
+        if (is_array($expression) && $expression['transformer'] == 'faker') {
             return new ColumnTransformFaker($tableName, $columnName,
               $expression);
         } else {
