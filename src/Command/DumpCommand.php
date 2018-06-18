@@ -19,7 +19,7 @@ class DumpCommand extends Command {
       ->setDescription('Dump a mysql database, with optionally sanitizing private data. See https://dev.mysql.com/doc/refman/5.7/en/mysqldump.html')
       ->addArgument('db-name', InputArgument::REQUIRED, 'DB name.')
       ->addArgument('include-tables', InputArgument::OPTIONAL|InputArgument::IS_ARRAY, 'Only include these tables, include all if empty')
-      ->addOption('exclude-tables', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Exclude these tables, include all if empty, supports regexps')
+      ->addOption('ignore-table', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Do not dump specified table. Use multiple times for multiple tables. Table should be specified with both database and table name (i.e. database.tablename)')
       ->addOption('result-file', 'r', InputOption::VALUE_OPTIONAL, 'Implies --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.')
       ->addOption('user', 'u', InputOption::VALUE_OPTIONAL, 'The connection user name.')
       ->addOption('password', 'p', InputOption::VALUE_OPTIONAL, 'The connection password.')
@@ -74,6 +74,9 @@ class DumpCommand extends Command {
     $user = $dumpSettings['user'];
     $password = $dumpSettings['password'];
     $dsn = $this->getDsn($dumpSettings);
+
+    $dumpSettings['exclude-tables'] = $this->getExcludedTables($dumpSettings);
+
     if (!empty($dumpSettings['gdpr-expressions'])) {
       $dumpSettings['gdpr-expressions'] = json_decode($dumpSettings['gdpr-expressions'], TRUE);
       if (json_last_error()) {
@@ -140,6 +143,19 @@ class DumpCommand extends Command {
       // 'no-autocommit' => TRUE,
       // 'single-transaction' => TRUE,
     ];
+  }
+
+  protected function getExcludedTables(array $dumpSettings) {
+    $excludedTables = [];
+    if(!empty($dumpSettings['ignore-table']) && is_array($dumpSettings['ignore-table'])) {
+      //mysqldump expects ignore-table values to be in the form database.tablename
+      foreach ($dumpSettings['ignore-table'] as $tableName) {
+        if(preg_match("/.+\.(.+)$/u", $tableName, $m)) {
+          $excludedTables[] = $m[1];
+        }
+      }
+    }
+    return $excludedTables;
   }
 
   protected function getDumpSettingsDefault() {
