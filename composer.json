@@ -4,7 +4,8 @@
   "require": {
     "symfony/console": "^3.0",
     "ifsnop/mysqldump-php": "^2.4",
-    "cweagans/composer-patches": "^1.6"
+    "cweagans/composer-patches": "^1.6",
+    "bomoko/mysql-cnf-parser": "^0.0.2"
   },
   "license": "GPL-2.0-or-later",
   "authors": [
