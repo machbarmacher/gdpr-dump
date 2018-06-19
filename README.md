@@ -54,3 +54,7 @@ $ drush sql-dump --tables-list=users_field_data --extra-dump=$'--gdpr-expression
 Currently this is a proof of concept to spark a community process.
 Especially the `--gdpr-expressions` option is neither handy to write for humans, nor does it scale well.
 Here we might need better options.
+
+## Contributors notes
+
+* Note that the project follows [PSR-2](https://www.php-fig.org/psr/psr-2/) for formatting. 
