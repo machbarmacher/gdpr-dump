@@ -4,7 +4,11 @@ error_reporting(E_ALL & E_STRICT);
 
 // Handling autoloading for different use cases.
 // @see https://github.com/sebastianbergmann/phpunit/blob/master/phpunit
-foreach (array(__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php') as $file) {
+foreach ([
+           __DIR__ . '/../../autoload.php',
+           __DIR__ . '/../vendor/autoload.php',
+           __DIR__ . '/vendor/autoload.php',
+         ] as $file) {
     if (file_exists($file)) {
         define('APP_COMPOSER_AUTOLOAD', $file);
         break;
