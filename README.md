@@ -71,7 +71,7 @@ $ drush sql-dump --tables-list=users_field_data --extra-dump=$'--gdpr-expression
 
 ### MySqlOptions file
 
-You are able to have your gdpr-expressions/replacesment options set in a mysql options file file.
+You are able to have your gdpr-expressions/replacement options set in a mysql options file file.
 It is to appear under the `[mysqldump]` section.
 
 So, for example, you might have `/etc/my.cnf` with the following content
