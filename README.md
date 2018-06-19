@@ -7,6 +7,11 @@ and can in principle dump any database that PDO supports.
 
 ## How to use
 
+There are presently two ways of manipulating data, 
+the first is by manipulating the actual SQL queries that are run on the server (given by the gdpr-expressions path), 
+and the second is by replacing column output before the dump is generated (given by the gdpr-replacements option).
+
+
 ```
 $ ../vendor/bin/mysqldump drupal --host=mariadb --user=drupal --password=xxxxxxxx users_field_data --gdpr-expressions='{"users_field_data":{"name":"uid","mail":"uid","pass":"\"\""}}' --debug-sql
 ...
@@ -37,6 +42,21 @@ $ ../vendor/bin/mysqldump drupal --host=mariadb --user=drupal --password=xxxxxxx
 INSERT INTO `users_field_data` VALUES (0,'en','en',NULL,'',NULL,NULL,'',0,1523397207,1523397207,0,0,NULL,1);
 INSERT INTO `users_field_data` VALUES (1,'en','en',NULL,'admin','$S$Eb6kZl.9OFjoa69Z05pzUhaZJ6vpKaGZVpnjAxxLJ7ip0zOwanEV','admin@example.com','UTC',1,1523397207,1523397207,0,0,'admin@example.com',1);
 ```
+
+### Using gdpr-replacements
+
+Presently, this uses [Faker](https://packagist.org/packages/fzaninotto/faker) for the column sanitization.
+
+Presently, the tool searches for the "gdpr-replacements" option, either passed as a command line argument, or as part of a [MySql options file](https://dev.mysql.com/doc/refman/8.0/en/option-files.html).
+
+The "gdpr-replacements" option expects a JSON string with the following format
+
+```
+{"tableName" : {"columnName1": {"formatter": "Faker Formatter", ...}, {"columnName2": {"formatter": "Faker Formatter"}, ...}, ...}
+```
+
+This will replace the given column's value with Faker output.
+
 ## Use with drush
 
 As this mimicks mysqldump, it can be use with drush, backup_migrate and any tool that uses mysqldump.
@@ -47,6 +67,19 @@ $ export PATH=/var/www/html/vendor/bin:$PATH
 $ which mysqldump
 /var/www/html/vendor/bin/mysqldump
 $ drush sql-dump --tables-list=users_field_data --extra-dump=$'--gdpr-expressions=\'{"users_field_data":{"name":"uid","mail":"uid","init":"uid","pass":"\\"\\""}}\' --debug-sql'
+```
+
+### MySqlOptions file
+
+You are able to have your gdpr-expressions/replacesment options set in a mysql options file file.
+It is to appear under the `[mysqldump]` section.
+
+So, for example, you might have `/etc/my.cnf` with the following content
+
+```
+[mysqldump]
+gdpr-replacements='{"fakertest":{"name": {"formatter":"name"}, "telephone": {"formatter":"phoneNumber"}}}'
+
 ```
 
 ## Status and further development
