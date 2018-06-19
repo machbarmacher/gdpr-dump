@@ -3,6 +3,7 @@
 namespace machbarmacher\GdprDump\ColumnTransformer;
 
 use Faker\Factory;
+use Faker\Provider\Base;
 
 class ColumnTransformFaker extends ColumnTransformer
 {
@@ -23,7 +24,6 @@ class ColumnTransformFaker extends ColumnTransformer
             throw new ParseExpressionException("Invalid Faker provider for table:{$tableName} column:{$columnName}");
         }
 
-        //TODO: we want to ensure this provider is all good before we'll generate from it.
         $this->formatter = $expression['formatter'];
     }
 

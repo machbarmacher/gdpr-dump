@@ -9,19 +9,19 @@ class ColumnTransformerTest extends TestCase
 
     public function testCreatingOfNewExpressionStatement()
     {
-        $gdprEspressions = json_decode($this->jsonData, TRUE);
+        $gdprExpressions = json_decode($this->jsonData, TRUE);
         $tableName = "users_field_data";
         $columnName = "name";
-        $result = ColumnTransformer::create($tableName, $columnName, $gdprEspressions[$tableName][$columnName]);
+        $result = ColumnTransformer::create($tableName, $columnName, $gdprExpressions[$tableName][$columnName]);
         $this->assertTrue($result instanceof \machbarmacher\GdprDump\ColumnTransformer\ColumnTransformSelectStatement);
     }
 
     public function testCreatingNewFakerStatement()
     {
-        $gdprEspressions = json_decode($this->jsonData, TRUE);
+        $gdprExpressions = json_decode($this->jsonData, TRUE);
         $tableName = "users_field_data";
         $columnName = "pass";
-        $result = ColumnTransformer::create($tableName, $columnName, $gdprEspressions[$tableName][$columnName]);
+        $result = ColumnTransformer::create($tableName, $columnName, $gdprExpressions[$tableName][$columnName]);
         $this->assertTrue($result instanceof \machbarmacher\GdprDump\ColumnTransformer\ColumnTransformFaker);
     }
 }
