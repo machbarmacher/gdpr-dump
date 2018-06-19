@@ -3,12 +3,17 @@
 namespace machbarmacher\GdprDump;
 
 use Ifsnop\Mysqldump\Mysqldump;
+use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
+use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformFaker;
 
 class MysqldumpGdpr extends Mysqldump
 {
 
     /** @var [string][string]string */
     protected $gdprExpressions;
+
+    /** @var [string][string]string */
+    protected $gdprReplacements;
 
     /** @var bool */
     protected $debugSql;
@@ -24,6 +29,12 @@ class MysqldumpGdpr extends Mysqldump
             $this->gdprExpressions = $dumpSettings['gdpr-expressions'];
             unset($dumpSettings['gdpr-expressions']);
         }
+
+        if (array_key_exists('gdpr-replacements', $dumpSettings)) {
+            $this->gdprReplacements = $dumpSettings['gdpr-replacements'];
+            unset($dumpSettings['gdpr-replacements']);
+        }
+
         if (array_key_exists('debug-sql', $dumpSettings)) {
             $this->debugSql = $dumpSettings['debug-sql'];
             unset($dumpSettings['debug-sql']);
@@ -47,4 +58,18 @@ class MysqldumpGdpr extends Mysqldump
         }
         return $columnStmt;
     }
+
+    protected function hookTransformColumnValue($tableName, $colName, $colValue)
+    {
+        if (!empty($this->gdprReplacements[$tableName][$colName])) {
+            $transformer = ColumnTransformer::create($tableName,
+                $colName,
+                $this->gdprReplacements[$tableName][$colName]);
+            if ($transformer && $transformer instanceof ColumnTransformFaker) {
+                return $transformer->getValue();
+            }
+        }
+        return $colValue;
+    }
+
 }
