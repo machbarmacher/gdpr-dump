@@ -29,7 +29,7 @@ class ConfigParser
         foreach ($this->config as $section => $values) {
             foreach ($values as $key => $value) {
                 if (in_array($section,
-                    $sections) && (!isset($keys) || in_array($key, $keys))
+                        $sections) && (!isset($keys) || in_array($key, $keys))
                 ) {
                     $result[$key] = $value;
                 }
@@ -46,28 +46,28 @@ class ConfigParser
         $sections = [];
         $currentSection = 'NONE';
         $success = array_walk($lines,
-          function ($line) use (&$sections, &$currentSection, $keyRE) {
-              if (preg_match("/^\s*\\[($keyRE)\\]\s*$/u", $line, $m)) {
-                  $currentSection = $m[1];
-              } elseif (preg_match("/^\s*($keyRE)\s*=\s*(.*)$/u", $line, $m)) {
-                  $key = $m[1];
-                  $value = $m[2];
-                  $value = strtr($value, [
-                    '\b' => chr(8),
-                    '\t' => "\t",
-                    '\n' => "\n",
-                    '\r' => "\r",
-                    '\s' => ' ',
-                    '\\\\' => '\\',
-                  ]);
-                  if (preg_match('/^"(.*?)"(\s*#.*)?$/u', $value,
-                      $m) || preg_match('^/\'(.*?)\'(\s*#.*)?$/u', $value, $m)
-                  ) {
-                      $value = $m[1];
-                  }
-                  $sections[$currentSection][$key] = $value;
-              }
-          });
+            function ($line) use (&$sections, &$currentSection, $keyRE) {
+                if (preg_match("/^\s*\\[($keyRE)\\]\s*$/u", $line, $m)) {
+                    $currentSection = $m[1];
+                } elseif (preg_match("/^\s*($keyRE)\s*=\s*(.*)$/u", $line, $m)) {
+                    $key = $m[1];
+                    $value = $m[2];
+                    $value = strtr($value, [
+                        '\b' => chr(8),
+                        '\t' => "\t",
+                        '\n' => "\n",
+                        '\r' => "\r",
+                        '\s' => ' ',
+                        '\\\\' => '\\',
+                    ]);
+                    if (preg_match('/^"(.*?)"(\s*#.*)?$/u', $value, $m) ||
+                        preg_match('^/\'(.*?)\'(\s*#.*)?$/u', $value, $m)
+                    ) {
+                        $value = $m[1];
+                    }
+                    $sections[$currentSection][$key] = $value;
+                }
+            });
         if (!$success) {
             throw new \LogicException('Error parsing config sections.');
         }

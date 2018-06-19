@@ -14,11 +14,11 @@ class MysqldumpGdpr extends Mysqldump
     protected $debugSql;
 
     public function __construct(
-      $dsn = '',
-      $user = '',
-      $pass = '',
-      array $dumpSettings = [],
-      array $pdoSettings = []
+        $dsn = '',
+        $user = '',
+        $pass = '',
+        array $dumpSettings = [],
+        array $pdoSettings = []
     ) {
         if (array_key_exists('gdpr-expressions', $dumpSettings)) {
             $this->gdprExpressions = $dumpSettings['gdpr-expressions'];
@@ -43,7 +43,7 @@ class MysqldumpGdpr extends Mysqldump
         }
         if ($this->debugSql) {
             print "/* SELECT " . implode(",",
-                $columnStmt) . " FROM `$tableName` */\n\n";
+                    $columnStmt) . " FROM `$tableName` */\n\n";
         }
         return $columnStmt;
     }
