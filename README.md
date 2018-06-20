@@ -45,15 +45,28 @@ INSERT INTO `users_field_data` VALUES (1,'en','en',NULL,'admin','$S$Eb6kZl.9OFjo
 
 ### Using gdpr-replacements
 
-Presently, this uses [Faker](https://packagist.org/packages/fzaninotto/faker) for the column sanitization.
+This uses [Faker](https://packagist.org/packages/fzaninotto/faker) for most of the column sanitization.
 
 Presently, the tool searches for the "gdpr-replacements" option, either passed as a command line argument, or as part of a [MySql options file](https://dev.mysql.com/doc/refman/8.0/en/option-files.html).
 
 The "gdpr-replacements" option expects a JSON string with the following format
 
 ```
-{"tableName" : {"columnName1": {"formatter": "Faker Formatter", ...}, {"columnName2": {"formatter": "Faker Formatter"}, ...}, ...}
+{"tableName" : {"columnName1": {"formatter": "formatterType", ...}, {"columnName2": {"formatter": "formatterType"}, ...}, ...}
 ```
+Where *formatterType* is one of the following
+* **name** - generates a name
+* **phoneNumber** - generates a phone number
+* **username** - generates a random user name
+* **password** - generates a random password
+* **email** - generates a random email address
+* **date** - generates a date
+* **longText** - generates a sentence
+* **number** - generates a number
+* **randomText** - generates a sentence
+* **text** - generates a paragraph
+* **uri** - generates a URI
+* **clear** - generates an empty string
 
 This will replace the given column's value with Faker output.
 

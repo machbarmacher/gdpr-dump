@@ -10,8 +10,27 @@ class ColumnTransformFaker extends ColumnTransformer
 
     private static $factory;
 
+    public static $formatterTansformerMap = [
+        'name' => 'name',
+        'phoneNumber' => 'phoneNumber',
+        'username' => 'username',
+        'password' => 'password',
+        'email' => 'email',
+        'date' => 'date',
+        'longText' => 'paragraph',
+        'number' => 'number',
+        'randomText' => 'sentence',
+        'text' => 'sentence',
+        'uri' => 'url',
+    ];
+
+
     private $formatter;
 
+    public static function getSupportedFormatters()
+    {
+        return array_keys(self::$formatterTansformerMap);
+    }
 
     public function __construct($tableName, $columnName, $expression)
     {
@@ -20,11 +39,11 @@ class ColumnTransformFaker extends ColumnTransformer
             self::$factory = Factory::create();
         }
 
-        if (!isset($expression['formatter'])) {
+        if (!isset($expression['formatter']) || !array_key_exists($expression['formatter'], self::$formatterTansformerMap)) {
             throw new ParseExpressionException("Invalid Faker provider for table:{$tableName} column:{$columnName}");
         }
 
-        $this->formatter = $expression['formatter'];
+        $this->formatter = self::$formatterTansformerMap[$expression['formatter']];
     }
 
     public function getValue($uniqueId = null)
