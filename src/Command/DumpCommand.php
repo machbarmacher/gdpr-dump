@@ -162,12 +162,20 @@ class DumpCommand extends Command
     {
         $defaultsFiles[] = '/etc/my.cnf';
         $defaultsFiles[] = '/etc/mysql/my.cnf';
+        
         if ($extraFile) {
             $defaultsFiles[] = $extraFile;
         }
+
         if ($homeDir = getenv('MYSQL_HOME')) {
             $defaultsFiles[] = "$homeDir/.my.cnf";
             $defaultsFiles[] = "$homeDir/.mylogin.cnf";
+            $defaultsFiles[] = "$homeDir/.gdpr.cnf";
+        }
+
+        if ($gdprDumpHome = getenv('GDPR_DUMP_HOME')) {
+            $defaultsFiles[] = "$gdprDumpHome/gdpr.cnf";
+            $defaultsFiles[] = "$gdprDumpHome/.gdpr.cnf";
         }
 
         $config = new ConfigParser();
