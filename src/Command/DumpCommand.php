@@ -140,6 +140,16 @@ class DumpCommand extends Command
                     json_last_error_msg(), $dumpSettings['gdpr-expressions']));
             }
         }
+
+        if (!empty($dumpSettings['gdpr-replacements'])) {
+            $dumpSettings['gdpr-replacements'] = json_decode($dumpSettings['gdpr-replacements'],
+                true);
+            if (json_last_error()) {
+                throw new \UnexpectedValueException(sprintf('Invalid gdpr-replacements json (%s): %s',
+                    json_last_error_msg(), $dumpSettings['gdpr-replacements']));
+            }
+        }
+
         $dumpSettings = array_intersect_key($dumpSettings,
             $this->getDumpSettingsDefault());
         $pdoSettings = [];
@@ -266,6 +276,7 @@ class DumpCommand extends Command
                 'disable-foreign-keys-check' => true,
             ] + [
                 'gdpr-expressions' => null,
+                'gdpr-replacements' => null,
                 'debug-sql' => false,
             ];
     }
