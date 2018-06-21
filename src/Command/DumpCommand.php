@@ -23,6 +23,9 @@ class DumpCommand extends Command
             ->addArgument('include-tables',
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
                 'Only include these tables, include all if empty')
+            ->addOption('display-effective-replacements', null,
+                InputOption::VALUE_NONE,
+                'If this option is specified, gdpr-dump simply outputs the effective replacements that will be done to the data if the dump is done')
             ->addOption('ignore-table', null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'Do not dump specified table. Use multiple times for multiple tables. Table should be specified with both database and table name (i.e. database.tablename)')
@@ -153,9 +156,16 @@ class DumpCommand extends Command
         $dumpSettings = array_intersect_key($dumpSettings,
             $this->getDumpSettingsDefault());
         $pdoSettings = [];
-        $dumper = new MysqldumpGdpr($dsn, $user, $password, $dumpSettings,
-            $pdoSettings);
-        $dumper->start($input->getOption('result-file'));
+
+        if($input->getOption('display-effective-replacements'))
+        {
+            //we simply display the gdpr-dump specific settings and exit.
+            $this->displayEffectiveReplacements($output, $dumpSettings);
+        } else {
+            $dumper = new MysqldumpGdpr($dsn, $user, $password, $dumpSettings,
+                $pdoSettings);
+            $dumper->start($input->getOption('result-file'));
+        }
     }
 
     protected function getDefaults($extraFile)
@@ -279,5 +289,21 @@ class DumpCommand extends Command
                 'gdpr-replacements' => null,
                 'debug-sql' => false,
             ];
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param $dumpSettings
+     */
+    protected function displayEffectiveReplacements(
+        OutputInterface $output,
+        $dumpSettings
+    ) {
+        if (isset($dumpSettings['gdpr-expressions'])) {
+            $output->writeln("gdpr-expressions=" . json_encode($dumpSettings['gdpr-expressions']));
+        }
+        if (isset($dumpSettings['gdpr-replacements'])) {
+            $output->writeln("gdpr-replacements=" . json_encode($dumpSettings['gdpr-replacements']));
+        }
     }
 }
