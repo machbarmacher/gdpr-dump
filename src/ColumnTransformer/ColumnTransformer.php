@@ -12,8 +12,15 @@ abstract class ColumnTransformer
 
     public static function create($tableName, $columnName, $expression)
     {
-        if (is_array($expression)) {
+        if (is_array($expression) && in_array($expression['formatter'],
+                ColumnTransformFaker::getSupportedFormatters())
+        ) {
             return new ColumnTransformFaker($tableName, $columnName,
+                $expression);
+        } elseif (is_array($expression) && in_array($expression['formatter'],
+                ColumnTransformerClear::getSupportedFormatters())
+        ) {
+            return new ColumnTransformerClear($tableName, $columnName,
                 $expression);
         } else {
             throw new ParseExpressionException("Unable to parse given transform expression for table:{$tableName} column:{$columnName}");

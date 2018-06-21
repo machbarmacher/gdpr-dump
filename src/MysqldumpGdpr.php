@@ -65,7 +65,7 @@ class MysqldumpGdpr extends Mysqldump
             $transformer = ColumnTransformer::create($tableName,
                 $colName,
                 $this->gdprReplacements[$tableName][$colName]);
-            if ($transformer && $transformer instanceof ColumnTransformFaker) {
+            if ($transformer && $transformer instanceof ColumnTransformer) {
                 return $transformer->getValue();
             }
         }
