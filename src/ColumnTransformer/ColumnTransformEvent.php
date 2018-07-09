@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: bomoko
- * Date: 2018/07/09
- * Time: 1:31 PM
- */
 
 namespace machbarmacher\GdprDump\ColumnTransformer;
 
