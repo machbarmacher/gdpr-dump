@@ -6,7 +6,7 @@ use Faker\Factory;
 use Faker\Provider\Base;
 use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
 
-class ColumnTransformerFaker extends ColumnTransformer
+class FakerColumnTransformer extends ColumnTransformer
 {
 
     private static $factory;

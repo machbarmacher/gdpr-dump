@@ -5,8 +5,8 @@ namespace machbarmacher\GdprDump\ColumnTransformer;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use machbarmacher\GdprDump\ColumnTransformer\Plugins\ColumnTransformerClear;
-use machbarmacher\GdprDump\ColumnTransformer\Plugins\ColumnTransformerFaker;
+use machbarmacher\GdprDump\ColumnTransformer\Plugins\ClearColumnTransformer;
+use machbarmacher\GdprDump\ColumnTransformer\Plugins\FakerColumnTransformer;
 
 abstract class ColumnTransformer
 {
@@ -26,9 +26,9 @@ abstract class ColumnTransformer
             self::$dispatcher = new EventDispatcher();
 
             self::$dispatcher->addListener(self::COLUMN_TRANSFORM_REQUEST,
-              new ColumnTransformerFaker());
+              new FakerColumnTransformer());
             self::$dispatcher->addListener(self::COLUMN_TRANSFORM_REQUEST,
-              new ColumnTransformerClear());
+              new ClearColumnTransformer());
         }
 
     }
