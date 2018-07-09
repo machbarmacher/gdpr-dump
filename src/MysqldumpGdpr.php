@@ -4,7 +4,7 @@ namespace machbarmacher\GdprDump;
 
 use Ifsnop\Mysqldump\Mysqldump;
 use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
-use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformFaker;
+use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformerFaker;
 
 class MysqldumpGdpr extends Mysqldump
 {
@@ -62,11 +62,9 @@ class MysqldumpGdpr extends Mysqldump
     protected function hookTransformColumnValue($tableName, $colName, $colValue)
     {
         if (!empty($this->gdprReplacements[$tableName][$colName])) {
-            $transformer = ColumnTransformer::create($tableName,
-                $colName,
-                $this->gdprReplacements[$tableName][$colName]);
-            if ($transformer && $transformer instanceof ColumnTransformer) {
-                return $transformer->getValue();
+            $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
+            if($replacement !== FALSE) {
+                return $replacement;
             }
         }
         return $colValue;
