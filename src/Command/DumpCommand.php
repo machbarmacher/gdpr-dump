@@ -102,6 +102,8 @@ class DumpCommand extends Command
                 'Dump only rows selected by given WHERE condition.')
             ->addOption('gdpr-expressions', null, InputOption::VALUE_OPTIONAL,
                 'A json of gdpr sql-expressions keyed by table and column.')
+            ->addOption('gdpr-replacements', null, InputOption::VALUE_OPTIONAL,
+                'A json of gdpr replacement values keyed by table and column.')
             ->addOption('debug-sql', null, InputOption::VALUE_NONE,
                 'Add a comment with the dump sql.')
             // This seems NOT to work as documented.
