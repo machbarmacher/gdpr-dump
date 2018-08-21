@@ -7,7 +7,7 @@
     "cweagans/composer-patches": "^1.6",
     "bomoko/mysql-cnf-parser": "^0.0.2",
     "fzaninotto/faker": "^1.7",
-    "symfony/event-dispatcher": "^4.1"
+    "symfony/event-dispatcher": "~3.4|~4.0"
   },
   "license": "GPL-2.0-or-later",
   "authors": [
