@@ -35,8 +35,7 @@ class DumpCommand extends Command
             ->addOption('user', 'u', InputOption::VALUE_OPTIONAL,
                 'The connection user name.')
             ->addOption('password', 'p', InputOption::VALUE_OPTIONAL,
-                'The connection password.',
-              false)
+                'The connection password.',false)
             ->addOption('host', null, InputOption::VALUE_OPTIONAL,
                 'The connection host name.')
             ->addOption('port', 'P', InputOption::VALUE_OPTIONAL,
@@ -123,8 +122,10 @@ class DumpCommand extends Command
      *
      * @return mixed
      */
-    public function getPasswordFromConsole(InputInterface $input, OutputInterface $output)
-    {
+    public function getPasswordFromConsole(
+      InputInterface $input,
+      OutputInterface $output
+    ) {
         $questionHelper = $this->getHelper('question');
         $question = new Question("Enter password:");
         $question->setHidden(true);
@@ -134,9 +135,9 @@ class DumpCommand extends Command
     }
 
     /**
-     * Given the state of the console options, this function will determine whether
-     * to use either the command line password itself, ask a user to enter a password
-     * or fallback on the default passed in.
+     * Given the state of the console options, this function will determine
+     * whether to use either the command line password itself, ask a user to
+     * enter a password or fallback on the default passed in.
      *
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
@@ -144,14 +145,17 @@ class DumpCommand extends Command
      *
      * @return mixed|null
      */
-    public function getEffectivePassword(InputInterface $input, OutputInterface $output, $default = null)
-    {
+    public function getEffectivePassword(
+      InputInterface $input,
+      OutputInterface $output,
+      $default = null
+    ) {
         $password = $default;
 
         $consolePasswordOption = $input->getOption('password');
-        if($consolePasswordOption !== false) //we have a console password of some sort
+        if ($consolePasswordOption !== false) //we have a console password of some sort
         {
-            if($consolePasswordOption === NULL) //we need to ask for user input
+            if ($consolePasswordOption === null) //we need to ask for user input
             {
                 $password = $this->getPasswordFromConsole($input, $output);
             } else { //data has been passed in via the option itself
@@ -164,7 +168,6 @@ class DumpCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $dumpSettings =
             $this->getOptOptions($input->getOption('opt'))
             + $this->getDefaults($input->getOption('defaults-file'))
