@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 class DumpCommand extends Command
 {
@@ -34,7 +35,8 @@ class DumpCommand extends Command
             ->addOption('user', 'u', InputOption::VALUE_OPTIONAL,
                 'The connection user name.')
             ->addOption('password', 'p', InputOption::VALUE_OPTIONAL,
-                'The connection password.')
+                'The connection password.',
+              false)
             ->addOption('host', null, InputOption::VALUE_OPTIONAL,
                 'The connection host name.')
             ->addOption('port', 'P', InputOption::VALUE_OPTIONAL,
@@ -115,8 +117,54 @@ class DumpCommand extends Command
                 'Implies --add-drop-table --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.');
     }
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
+     * @return mixed
+     */
+    public function getPasswordFromConsole(InputInterface $input, OutputInterface $output)
+    {
+        $questionHelper = $this->getHelper('question');
+        $question = new Question("Enter password:");
+        $question->setHidden(true);
+        $question->setHiddenFallback(false);
+        $password = $questionHelper->ask($input, $output, $question);
+        return $password;
+    }
+
+    /**
+     * Given the state of the console options, this function will determine whether
+     * to use either the command line password itself, ask a user to enter a password
+     * or fallback on the default passed in.
+     *
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @param null $default
+     *
+     * @return mixed|null
+     */
+    public function getEffectivePassword(InputInterface $input, OutputInterface $output, $default = null)
+    {
+        $password = $default;
+
+        $consolePasswordOption = $input->getOption('password');
+        if($consolePasswordOption !== false) //we have a console password of some sort
+        {
+            if($consolePasswordOption === NULL) //we need to ask for user input
+            {
+                $password = $this->getPasswordFromConsole($input, $output);
+            } else { //data has been passed in via the option itself
+                $password = $consolePasswordOption;
+            }
+        }
+
+        return $password;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
         $dumpSettings =
             $this->getOptOptions($input->getOption('opt'))
             + $this->getDefaults($input->getOption('defaults-file'))
@@ -124,7 +172,6 @@ class DumpCommand extends Command
             + array_filter($input->getOptions())
             + array_fill_keys([
                 'user',
-                'password',
                 'host',
                 'port',
                 'socket',
@@ -132,7 +179,11 @@ class DumpCommand extends Command
                 'db-type',
             ], null);
         $user = $dumpSettings['user'];
+
+
+        $dumpSettings['password'] = $this->getEffectivePassword($input, $output, $dumpSettings['password']);
         $password = $dumpSettings['password'];
+
         $dsn = $this->getDsn($dumpSettings);
 
         $dumpSettings['exclude-tables'] = $this->getExcludedTables($dumpSettings);
@@ -174,7 +225,7 @@ class DumpCommand extends Command
     {
         $defaultsFiles[] = '/etc/my.cnf';
         $defaultsFiles[] = '/etc/mysql/my.cnf';
-        
+
         if ($extraFile) {
             $defaultsFiles[] = $extraFile;
         }
