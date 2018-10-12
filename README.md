@@ -70,6 +70,8 @@ Where *formatterType* is one of the following
 
 This will replace the given column's value with Faker output.
 
+You can also save replacements mapping to JSON file and use it with `--gdpr-replacements-file` option.
+
 ## Use with drush
 
 As this mimicks mysqldump, it can be use with drush, backup_migrate and any tool that uses mysqldump.
