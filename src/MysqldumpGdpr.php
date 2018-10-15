@@ -40,6 +40,8 @@ class MysqldumpGdpr extends Mysqldump
             unset($dumpSettings['debug-sql']);
         }
         parent::__construct($dsn, $user, $pass, $dumpSettings, $pdoSettings);
+        $reflection = new \ReflectionProperty(get_parent_class(), 'tableColumnTypes');
+        $reflection->setAccessible(true);
     }
 
     public function getColumnStmt($tableName)
@@ -62,12 +64,17 @@ class MysqldumpGdpr extends Mysqldump
     protected function hookTransformColumnValue($tableName, $colName, $colValue)
     {
         if (!empty($this->gdprReplacements[$tableName][$colName])) {
-            $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
-            if($replacement !== FALSE) {
+            $replacement = ColumnTransformer::replaceValue($tableName, $colName,
+                $this->gdprReplacements[$tableName][$colName]);
+            if ($replacement !== false) {
                 return $replacement;
             }
         }
         return $colValue;
     }
 
+    protected function tableColumnTypes()
+    {
+        return $this->tableColumnTypes;
+    }
 }
