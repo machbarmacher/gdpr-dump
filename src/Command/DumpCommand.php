@@ -354,7 +354,6 @@ class DumpCommand extends Command
             ] + [
                 'gdpr-expressions' => null,
                 'gdpr-replacements' => null,
-                'gdpr-replacements-file' => null,
                 'debug-sql' => false,
             ];
     }

@@ -35,11 +35,6 @@ class MysqldumpGdpr extends Mysqldump
             unset($dumpSettings['gdpr-replacements']);
         }
 
-        if (array_key_exists('gdpr-replacements-file', $dumpSettings)) {
-            $this->gdprReplacements = json_decode(file_get_contents($dumpSettings['gdpr-replacements-file']),true);
-            unset($dumpSettings['gdpr-replacements-file']);
-        }
-
         if (array_key_exists('debug-sql', $dumpSettings)) {
             $this->debugSql = $dumpSettings['debug-sql'];
             unset($dumpSettings['debug-sql']);
