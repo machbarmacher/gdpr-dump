@@ -105,6 +105,8 @@ class DumpCommand extends Command
                 'A json of gdpr sql-expressions keyed by table and column.')
             ->addOption('gdpr-replacements', null, InputOption::VALUE_OPTIONAL,
                 'A json of gdpr replacement values keyed by table and column.')
+            ->addOption('gdpr-replacements-file', null, InputOption::VALUE_OPTIONAL,
+                'File that contains a json of gdpr replacement values keyed by table and column.')
             ->addOption('debug-sql', null, InputOption::VALUE_NONE,
                 'Add a comment with the dump sql.')
             // This seems NOT to work as documented.
@@ -202,6 +204,15 @@ class DumpCommand extends Command
 
         if (!empty($dumpSettings['gdpr-replacements'])) {
             $dumpSettings['gdpr-replacements'] = json_decode($dumpSettings['gdpr-replacements'],
+                true);
+            if (json_last_error()) {
+                throw new \UnexpectedValueException(sprintf('Invalid gdpr-replacements json (%s): %s',
+                    json_last_error_msg(), $dumpSettings['gdpr-replacements']));
+            }
+        }
+
+        if (!empty($dumpSettings['gdpr-replacements-file'])) {
+            $dumpSettings['gdpr-replacements'] = json_decode(file_get_contents($dumpSettings['gdpr-replacements-file']),
                 true);
             if (json_last_error()) {
                 throw new \UnexpectedValueException(sprintf('Invalid gdpr-replacements json (%s): %s',
