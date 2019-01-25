@@ -14,6 +14,17 @@ use Symfony\Component\Console\Question\Question;
 
 class DumpCommand extends Command
 {
+    // Options that can be negated through skip-[option], allows to have
+    // defaults to true with explicit disablement.
+    private static $skipable_options = [
+        'add-drop-table',
+        'add-locks',
+        'disable-keys',
+        'extended-insert',
+        'lock-tables',
+        'quote-names',
+        'opt'
+    ];
 
     protected function configure()
     {
@@ -70,9 +81,9 @@ class DumpCommand extends Command
                 InputOption::VALUE_OPTIONAL,
                 'Default charset. Defaults to utf8mb4.', 'utf8mb4')
             ->addOption('disable-keys', null, InputOption::VALUE_NONE,
-                'Adds disable-keys statements for faster dump execution. Defaults to on, use no-disable-keys to switch off.')
+                'Adds disable-keys statements for faster dump execution. Defaults to on, use skip-disable-keys to switch off.')
             ->addOption('extended-insert', 'e', InputOption::VALUE_NONE,
-                'Write INSERT statements using multiple-row syntax that includes several VALUES lists. This results in a smaller dump file and speeds up inserts when the file is reloaded. Defaults to on, use no-extended-insert to switch off.')
+                'Write INSERT statements using multiple-row syntax that includes several VALUES lists. This results in a smaller dump file and speeds up inserts when the file is reloaded. Defaults to on, use skip-extended-insert to switch off.')
             ->addOption('events', null, InputOption::VALUE_NONE,
                 'Dump events from dumped databases	')
             ->addOption('hex-blob', null, InputOption::VALUE_NONE,
@@ -89,16 +100,6 @@ class DumpCommand extends Command
                 'Dump stored routines (procedures and functions) from dumped databases.')
             ->addOption('single-transaction', null, InputOption::VALUE_NONE,
                 'Issue a BEGIN SQL statement before dumping data from server.')
-            ->addOption('skip-triggers', null, InputOption::VALUE_NONE,
-                'Do not dump triggers.')
-            ->addOption('skip-tz-utc', null, InputOption::VALUE_NONE,
-                'Turn off tz-utc.')
-            ->addOption('skip-comments', null, InputOption::VALUE_NONE,
-                'Do not add comments to dump file.')
-            ->addOption('skip-dump-date', null, InputOption::VALUE_NONE,
-                'Skip dump date to better compare dumps.')
-            ->addOption('skip-definer', null, InputOption::VALUE_NONE,
-                'Omit DEFINER and SQL SECURITY clauses from the CREATE statements for views and stored programs.')
             ->addOption('where', null, InputOption::VALUE_OPTIONAL,
                 'Dump only rows selected by given WHERE condition.')
             ->addOption('gdpr-expressions', null, InputOption::VALUE_OPTIONAL,
@@ -113,9 +114,24 @@ class DumpCommand extends Command
             //->addOption('databases', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Dump several databases. Normally, mysqldump treats the first name argument on the command line as a database name and following names as table names. With this option, it treats all name arguments as database names.')
             // Add some options that e.g. drush expects.
             ->addOption('quote-names', 'Q', InputOption::VALUE_NONE,
-                'Currently ignored.')
+                'Currently ignored (hardcoded to on in mysqldump-php).')
             ->addOption('opt', null, InputOption::VALUE_NONE,
-                'Implies --add-drop-table --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.');
+                'Implies --add-drop-table --add-locks --disable-keys --extended-insert --hex-blob --no-autocommit --single-transaction.')
+            ->addOption('skip-triggers', null, InputOption::VALUE_NONE,
+                'Do not dump triggers.')
+            ->addOption('skip-tz-utc', null, InputOption::VALUE_NONE,
+                'Turn off tz-utc.')
+            ->addOption('skip-comments', null, InputOption::VALUE_NONE,
+                'Do not add comments to dump file.')
+            ->addOption('skip-dump-date', null, InputOption::VALUE_NONE,
+                'Skip dump date to better compare dumps.')
+            ->addOption('skip-definer', null, InputOption::VALUE_NONE,
+                'Omit DEFINER and SQL SECURITY clauses from the CREATE statements for views and stored programs.');
+
+        foreach(self::$skipable_options as $option) {
+            $this->addOption("skip-$option", null, InputOption::VALUE_NONE,
+                "Inhibits any previous explicit or implicit $option option.");
+        }
     }
 
     /**
@@ -171,7 +187,7 @@ class DumpCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $dumpSettings =
-            $this->getOptOptions($input->getOption('opt'))
+            $this->getOptOptions($input->getOption('opt') && !$input->getOption('skip-opt'))
             + $this->getDefaults($input->getOption('defaults-file'))
             + array_filter($input->getArguments())
             + array_filter($input->getOptions())
@@ -185,6 +201,11 @@ class DumpCommand extends Command
             ], null);
         $user = $dumpSettings['user'];
 
+        foreach(self::$skipable_options as $option) {
+            if($input->getOption("skip-$option")) {
+                $dumpSettings[$option] = false;
+            }
+        }
 
         $dumpSettings['password'] = $this->getEffectivePassword($input, $output, $dumpSettings['password']);
         $password = $dumpSettings['password'];
