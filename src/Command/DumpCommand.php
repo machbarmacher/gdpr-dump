@@ -47,8 +47,10 @@ class DumpCommand extends Command
                 'mysql')
             ->addOption('defaults-file', null, InputOption::VALUE_OPTIONAL,
                 'An additional my.cnf file.')
-            ->addOption('compress', null, InputOption::VALUE_OPTIONAL,
-                'Options: Gzip, Bzip2. Defaults to None.', 'None')
+            ->addOption('compress-result-file', null, InputOption::VALUE_OPTIONAL,
+                'Compress resulting file, available Options: Gzip, Bzip2. Defaults to None.', 'None')
+            ->addOption('compress', 'C', InputOption::VALUE_NONE,
+                'Compress all information sent between the client and the server if both support compression.')
             ->addOption('init_commands', null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'DB Init commands.')
@@ -220,9 +222,24 @@ class DumpCommand extends Command
             }
         }
 
+        $pdoSettings = [];
+
+        if (!empty($dumpSettings['compress'])) {
+            if ($dumpSettings['db-type'] !== 'mysql') {
+                throw new \UnexpectedValueException(sprintf('Option compress is not available for db type %s',
+                    $dumpSettings['db-type']));
+            }
+            $pdoSettings[] = \PDO::MYSQL_ATTR_COMPRESS;
+            unset($dumpSettings['compress']);
+        }
+
+        // Remap mysqldump option to Mysqldump one.
+        if (!empty($dumpSettings['compress-result-file'])) {
+            $dumpSettings['compress'] = $dumpSettings['compress-result-file'];
+        }
+
         $dumpSettings = array_intersect_key($dumpSettings,
             $this->getDumpSettingsDefault());
-        $pdoSettings = [];
 
         if($input->getOption('display-effective-replacements'))
         {
