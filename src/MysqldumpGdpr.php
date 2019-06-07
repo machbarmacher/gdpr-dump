@@ -77,19 +77,19 @@ class MysqldumpGdpr extends Mysqldump
         return FALSE;
       }
 
-      if (!empty($this->gdprReplacements[$tableName][$colName]['conditions'])) {
-        $action = empty($this->gdprReplacements[$tableName][$colName]['conditions_action'])
-          || $this->gdprReplacements[$tableName][$colName]['conditions_action'] == 'anonymize' ? 'anonymize' : 'ignore';
+      if (!empty($this->gdprReplacements[$tableName][$colName]['include'])
+        || !empty($this->gdprReplacements[$tableName][$colName]['exclude'])) {
+        $action = !empty($this->gdprReplacements[$tableName][$colName]['exclude']) ? 'exclude' : 'include';
 
         $result = TRUE;
-        foreach ($this->gdprReplacements[$tableName][$colName]['conditions'] as $column => $values) {
+        foreach ($this->gdprReplacements[$tableName][$colName][$action] as $column => $values) {
           if (!in_array($row[$column], $values)) {
             $result = FALSE;
             break;
           }
         }
 
-        return $result === ($action == 'anonymize');
+        return $result === ($action == 'include');
       }
 
       return TRUE;
