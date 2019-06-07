@@ -63,7 +63,8 @@ class MysqldumpGdpr extends Mysqldump
 
     protected function hookTransformColumnValue($tableName, $colName, $colValue)
     {
-        if (!empty($this->gdprReplacements[$tableName][$colName])) {
+        if (!empty($this->gdprReplacements[$tableName][$colName])
+          && (empty($this->gdprReplacements[$tableName][$colName]['ignored_values']) || !in_array($colValue, $this->gdprReplacements[$tableName][$colName]['ignored_values']))) {
             $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
             if($replacement !== FALSE) {
                 return $replacement;
