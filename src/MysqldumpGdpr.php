@@ -61,16 +61,38 @@ class MysqldumpGdpr extends Mysqldump
         return $columnStmt;
     }
 
-    protected function hookTransformColumnValue($tableName, $colName, $colValue)
+    protected function hookTransformColumnValue($tableName, $colName, $colValue, $row)
     {
-        if (!empty($this->gdprReplacements[$tableName][$colName])
-          && (empty($this->gdprReplacements[$tableName][$colName]['ignored_values']) || !in_array($colValue, $this->gdprReplacements[$tableName][$colName]['ignored_values']))) {
+        if ($this->isAnonymizable($tableName, $colName, $colValue, $row)) {
             $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
             if($replacement !== FALSE) {
                 return $replacement;
             }
         }
         return $colValue;
+    }
+
+    protected function isAnonymizable($tableName, $colName, $colValue, $row) {
+      if (empty($this->gdprReplacements[$tableName][$colName])) {
+        return FALSE;
+      }
+
+      if (!empty($this->gdprReplacements[$tableName][$colName]['conditions'])) {
+        $action = empty($this->gdprReplacements[$tableName][$colName]['conditions_action'])
+          || $this->gdprReplacements[$tableName][$colName]['conditions_action'] == 'anonymize' ? 'anonymize' : 'ignore';
+
+        $result = TRUE;
+        foreach ($this->gdprReplacements[$tableName][$colName]['conditions'] as $column => $values) {
+          if (!in_array($row[$column], $values)) {
+            $result = FALSE;
+            break;
+          }
+        }
+
+        return $result === ($action == 'anonymize');
+      }
+
+      return TRUE;
     }
 
 }
