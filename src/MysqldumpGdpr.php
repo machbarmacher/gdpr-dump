@@ -18,6 +18,12 @@ class MysqldumpGdpr extends Mysqldump
     /** @var bool */
     protected $debugSql;
 
+    /** @var array */
+    protected $storedData;
+
+    /** @var array */
+    protected $queries;
+
     public function __construct(
         $dsn = '',
         $user = '',
@@ -33,6 +39,20 @@ class MysqldumpGdpr extends Mysqldump
         if (array_key_exists('gdpr-replacements', $dumpSettings)) {
             $this->gdprReplacements = $dumpSettings['gdpr-replacements'];
             unset($dumpSettings['gdpr-replacements']);
+
+            foreach ($this->gdprReplacements as $tableName => $tableSettings) {
+                foreach ($tableSettings as $fieldName => $fieldSettings) {
+                    if (empty($fieldSettings['include']) && empty($fieldSettings['exclude'])) {
+                        continue;
+                    }
+                    $action = !empty($fieldSettings['exclude']) ? 'exclude' : 'include';
+                    foreach ($fieldSettings[$action] as $column => $query) {
+                        if (is_string($query)) {
+                            $this->queries[$tableName][$fieldName][$column] = $query;
+                        }
+                    }
+                }
+            }
         }
 
         if (array_key_exists('debug-sql', $dumpSettings)) {
@@ -72,27 +92,49 @@ class MysqldumpGdpr extends Mysqldump
         return $colValue;
     }
 
-    protected function isAnonymizable($tableName, $colName, $colValue, $row) {
-      if (empty($this->gdprReplacements[$tableName][$colName])) {
-        return FALSE;
-      }
-
-      if (!empty($this->gdprReplacements[$tableName][$colName]['include'])
-        || !empty($this->gdprReplacements[$tableName][$colName]['exclude'])) {
-        $action = !empty($this->gdprReplacements[$tableName][$colName]['exclude']) ? 'exclude' : 'include';
-
-        $result = TRUE;
-        foreach ($this->gdprReplacements[$tableName][$colName][$action] as $column => $values) {
-          if (!in_array($row[$column], $values)) {
-            $result = FALSE;
-            break;
-          }
+    public function hookPreExportTables($dbHandler)
+    {
+        if (empty($this->queries)) {
+          return;
         }
 
-        return $result === ($action == 'include');
-      }
+        foreach ($this->queries as $tableName => $tableSettings) {
+            foreach ($tableSettings as $fieldName => $fieldSettings) {
+                foreach ($fieldSettings as $column => $query) {
+                    $result = $dbHandler->query($query);
+                    $result->setFetchMode(\PDO::FETCH_COLUMN, 0);
+                    $result = $result->fetchAll();
+                    $this->storedData[$tableName][$fieldName][$column] = $result;
+                }
+            }
+        }
+    }
 
-      return TRUE;
+    protected function isAnonymizable($tableName, $colName, $colValue, $row) {
+        if (empty($this->gdprReplacements[$tableName][$colName])) {
+          return FALSE;
+        }
+
+        if (!empty($this->gdprReplacements[$tableName][$colName]['include'])
+            || !empty($this->gdprReplacements[$tableName][$colName]['exclude'])) {
+            $action = !empty($this->gdprReplacements[$tableName][$colName]['exclude']) ? 'exclude' : 'include';
+
+            $result = TRUE;
+            foreach ($this->gdprReplacements[$tableName][$colName][$action] as $column => $values) {
+                if (is_string($values) && !in_array($row[$column], $this->storedData[$tableName][$colName][$column])) {
+                    $result = FALSE;
+                    break;
+                }
+                elseif (is_array($values) && !in_array($row[$column], $values)) {
+                    $result = FALSE;
+                    break;
+                }
+            }
+
+            return $result === ($action == 'include');
+        }
+
+        return TRUE;
     }
 
 }
