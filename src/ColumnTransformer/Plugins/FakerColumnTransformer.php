@@ -19,7 +19,7 @@ class FakerColumnTransformer extends ColumnTransformer
         'email' => 'email',
         'date' => 'date',
         'longText' => 'paragraph',
-        'number' => 'number',
+        'number' => 'randomNumber',
         'randomText' => 'sentence',
         'text' => 'sentence',
         'uri' => 'url',
@@ -35,6 +35,14 @@ class FakerColumnTransformer extends ColumnTransformer
     {
         if (!isset(self::$factory)) {
             self::$factory = Factory::create();
+            foreach(self::$factory->getProviders() as $provider) {
+                $clazz = new \ReflectionClass($provider);
+                $methods = $clazz->getMethods(\ReflectionMethod::IS_PUBLIC);
+                foreach($methods as $m) {
+                    if(strpos($m->name, '__') === 0) continue;
+                    self::$formatterTansformerMap[$m->name] = $m->name;
+                }
+            }
         }
     }
 
