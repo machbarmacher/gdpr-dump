@@ -9,17 +9,12 @@ use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
 class FakerColumnTransformer extends ColumnTransformer
 {
 
-    private static $factory;
+    private static $generator;
 
-    public static $formatterTansformerMap = [
-        'name' => 'name',
-        'phoneNumber' => 'phoneNumber',
-        'username' => 'username',
-        'password' => 'password',
-        'email' => 'email',
-        'date' => 'date',
+    // These are kept for backward compatibility
+    private static $formatterTansformerMap = [
         'longText' => 'paragraph',
-        'number' => 'number',
+        'number' => 'randomNumber',
         'randomText' => 'sentence',
         'text' => 'sentence',
         'uri' => 'url',
@@ -33,13 +28,23 @@ class FakerColumnTransformer extends ColumnTransformer
 
     public function __construct()
     {
-        if (!isset(self::$factory)) {
-            self::$factory = Factory::create();
+        if (!isset(self::$generator)) {
+            self::$generator = Factory::create();
+            foreach(self::$generator->getProviders() as $provider)
+            {
+                $clazz = new \ReflectionClass($provider);
+                $methods = $clazz->getMethods(\ReflectionMethod::IS_PUBLIC);
+                foreach($methods as $m)
+                {
+                    if(strpos($m->name, '__') === 0) continue;
+                    self::$formatterTansformerMap[$m->name] = $m->name;
+                }
+            }
         }
     }
 
     public function getValue($expression)
     {
-        return self::$factory->format(self::$formatterTansformerMap[$expression['formatter']]);
+        return self::$generator->format(self::$formatterTansformerMap[$expression['formatter']]);
     }
 }
