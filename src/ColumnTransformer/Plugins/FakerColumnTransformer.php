@@ -9,15 +9,10 @@ use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
 class FakerColumnTransformer extends ColumnTransformer
 {
 
-    private static $factory;
+    private static $generator;
 
-    public static $formatterTansformerMap = [
-        'name' => 'name',
-        'phoneNumber' => 'phoneNumber',
-        'username' => 'username',
-        'password' => 'password',
-        'email' => 'email',
-        'date' => 'date',
+    // These are kept for backward compatibility
+    private static $formatterTansformerMap = [
         'longText' => 'paragraph',
         'number' => 'randomNumber',
         'randomText' => 'sentence',
@@ -48,6 +43,6 @@ class FakerColumnTransformer extends ColumnTransformer
 
     public function getValue($expression)
     {
-        return self::$factory->format(self::$formatterTansformerMap[$expression['formatter']]);
+        return self::$generator->format(self::$formatterTansformerMap[$expression['formatter']]);
     }
 }
