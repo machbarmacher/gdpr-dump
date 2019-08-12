@@ -3,6 +3,7 @@
 namespace machbarmacher\GdprDump\ColumnTransformer\Plugins;
 
 use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
+use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformEvent;
 
 class ClearColumnTransformer extends ColumnTransformer
 {
@@ -12,7 +13,7 @@ class ClearColumnTransformer extends ColumnTransformer
         return ['clear'];
     }
 
-    public function getValue($expression)
+    public function getValue(ColumnTransformEvent $event)
     {
         return "";
     }

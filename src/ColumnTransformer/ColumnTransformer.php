@@ -3,10 +3,9 @@
 namespace machbarmacher\GdprDump\ColumnTransformer;
 
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use machbarmacher\GdprDump\ColumnTransformer\Plugins\ClearColumnTransformer;
 use machbarmacher\GdprDump\ColumnTransformer\Plugins\FakerColumnTransformer;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 abstract class ColumnTransformer
 {
@@ -19,18 +18,19 @@ abstract class ColumnTransformer
 
     protected static $dispatcher;
 
+    public static function addTransformer(ColumnTransformer $columnTransformer)
+    {
+        self::setUp();
+        self::$dispatcher->addListener(self::COLUMN_TRANSFORM_REQUEST, $columnTransformer);
+    }
 
     public static function setUp()
     {
         if (!isset(self::$dispatcher)) {
             self::$dispatcher = new EventDispatcher();
-
-            self::$dispatcher->addListener(self::COLUMN_TRANSFORM_REQUEST,
-              new FakerColumnTransformer());
-            self::$dispatcher->addListener(self::COLUMN_TRANSFORM_REQUEST,
-              new ClearColumnTransformer());
+            self::addTransformer(new FakerColumnTransformer());
+            self::addTransformer(new ClearColumnTransformer());
         }
-
     }
 
     public static function replaceValue($tableName, $columnName, $expression)
@@ -47,13 +47,15 @@ abstract class ColumnTransformer
 
     public function __invoke(ColumnTransformEvent $event)
     {
-        if (in_array(($event->getExpression())['formatter'],
-          $this->getSupportedFormatters())) {
-            $event->setReplacementValue($this->getValue($event->getExpression()));
+        if (in_array(
+            ($event->getExpression())['formatter'],
+            $this->getSupportedFormatters()
+        )) {
+            $event->setReplacementValue($this->getValue($event));
         }
     }
 
-    abstract public function getValue($expression);
+    abstract public function getValue(ColumnTransformEvent $event);
 
     abstract protected function getSupportedFormatters();
 }
