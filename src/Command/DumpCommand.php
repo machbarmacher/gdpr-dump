@@ -195,6 +195,8 @@ class DumpCommand extends Command
 
         $dumpSettings['exclude-tables'] = $this->getExcludedTables($dumpSettings);
 
+        $dumpSettings = $this->determineNoDataSettings($input, $dumpSettings);
+
         if (!empty($dumpSettings['gdpr-expressions'])) {
             $dumpSettings['gdpr-expressions'] = json_decode($dumpSettings['gdpr-expressions'],
                 true);
@@ -389,5 +391,27 @@ class DumpCommand extends Command
         if (isset($dumpSettings['gdpr-replacements'])) {
             $output->writeln("gdpr-replacements=" . json_encode($dumpSettings['gdpr-replacements']));
         }
+    }
+
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param $dumpSettings
+     *
+     * @return mixed
+     */
+    protected function determineNoDataSettings(
+        InputInterface $input,
+        $dumpSettings
+    ) {
+        if ($input->getOption('no-data')) {
+            $dumpSettings['no-data'] = true;
+        } elseif (!empty($dumpSettings['gdpr-skip-tables'])) {
+            $dumpSettings['no-data'] = json_decode($dumpSettings['gdpr-skip-tables']);
+            if (json_last_error()) {
+                throw new \UnexpectedValueException(sprintf('Invalid gdpr-skip-tables json (%s): %s',
+                    json_last_error_msg(), $dumpSettings['gdpr-expressions']));
+            }
+        }
+        return $dumpSettings;
     }
 }
