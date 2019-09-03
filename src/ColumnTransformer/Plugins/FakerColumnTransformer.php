@@ -10,6 +10,7 @@ class FakerColumnTransformer extends ColumnTransformer
 {
 
     private static $generator;
+    private static $uniqueGenerator;
 
     public static $formatterTansformerMap = [
         'name' => 'name',
@@ -36,7 +37,8 @@ class FakerColumnTransformer extends ColumnTransformer
     {
         if (!isset(self::$generator)) {
             self::$generator = Factory::create();
-            foreach(self::$generator->getProviders() as $provider)
+            self::$uniqueGenerator = Factory::create()->unique();
+          foreach(self::$generator->getProviders() as $provider)
             {
                 $clazz = new \ReflectionClass($provider);
                 $methods = $clazz->getMethods(\ReflectionMethod::IS_PUBLIC);
@@ -52,6 +54,10 @@ class FakerColumnTransformer extends ColumnTransformer
     public function getValue($expression)
     {
         $arguments = $expression['arguments'] ?: [];
+        if (!empty($expression['unique'])) {
+          return self::$uniqueGenerator->format(self::$formatterTansformerMap[$expression['formatter']], $arguments);
+        }
+
         return self::$generator->format(self::$formatterTansformerMap[$expression['formatter']], $arguments);
     }
 }
