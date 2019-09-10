@@ -29,7 +29,8 @@ class FakerColumnTransformer extends ColumnTransformer
     public function __construct()
     {
         if (!isset(self::$generator)) {
-            self::$generator = Factory::create();
+            $locale = substr($_SERVER['LANG'], 0, 5);
+            self::$generator = Factory::create($locale);
             foreach(self::$generator->getProviders() as $provider)
             {
                 $clazz = new \ReflectionClass($provider);
