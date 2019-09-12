@@ -3,8 +3,8 @@
 namespace machbarmacher\GdprDump\ColumnTransformer\Plugins;
 
 use Faker\Factory;
-use Faker\Provider\Base;
 use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformer;
+use machbarmacher\GdprDump\ColumnTransformer\ColumnTransformEvent;
 
 class FakerColumnTransformer extends ColumnTransformer
 {
@@ -29,23 +29,29 @@ class FakerColumnTransformer extends ColumnTransformer
     public function __construct()
     {
         if (!isset(self::$generator)) {
+<<<<<<< HEAD
             $locale = substr($_SERVER['LANG'], 0, 5);
             self::$generator = Factory::create($locale);
             foreach(self::$generator->getProviders() as $provider)
             {
+=======
+            self::$generator = Factory::create();
+            foreach (self::$generator->getProviders() as $provider) {
+>>>>>>> ca76d2d1d465f7bf4b9168f505a1120b7ea2d543
                 $clazz = new \ReflectionClass($provider);
                 $methods = $clazz->getMethods(\ReflectionMethod::IS_PUBLIC);
-                foreach($methods as $m)
-                {
-                    if(strpos($m->name, '__') === 0) continue;
+                foreach ($methods as $m) {
+                    if (strpos($m->name, '__') === 0) {
+                        continue;
+                    }
                     self::$formatterTansformerMap[$m->name] = $m->name;
                 }
             }
         }
     }
 
-    public function getValue($expression)
+    public function getValue(ColumnTransformEvent $event)
     {
-        return self::$generator->format(self::$formatterTansformerMap[$expression['formatter']]);
+        return self::$generator->format(self::$formatterTansformerMap[$event->getExpression()['formatter']]);
     }
 }
