@@ -47,6 +47,7 @@ class MysqldumpGdpr extends Mysqldump
                     $replacement = ColumnTransformer::replaceValue(
                         $tableName,
                         $colName,
+                        $colValue,
                         $this->gdprReplacements[$tableName][$colName]
                     );
                     if ($replacement !== false) {

@@ -29,15 +29,10 @@ class FakerColumnTransformer extends ColumnTransformer
     public function __construct()
     {
         if (!isset(self::$generator)) {
-<<<<<<< HEAD
             $locale = substr($_SERVER['LANG'], 0, 5);
             self::$generator = Factory::create($locale);
             foreach(self::$generator->getProviders() as $provider)
             {
-=======
-            self::$generator = Factory::create();
-            foreach (self::$generator->getProviders() as $provider) {
->>>>>>> ca76d2d1d465f7bf4b9168f505a1120b7ea2d543
                 $clazz = new \ReflectionClass($provider);
                 $methods = $clazz->getMethods(\ReflectionMethod::IS_PUBLIC);
                 foreach ($methods as $m) {

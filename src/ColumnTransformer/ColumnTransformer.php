@@ -33,10 +33,10 @@ abstract class ColumnTransformer
         }
     }
 
-    public static function replaceValue($tableName, $columnName, $expression)
+    public static function replaceValue($tableName, $columnName, $columnValue, $expression)
     {
         self::setUp();
-        $event = new ColumnTransformEvent($tableName, $columnName, $expression);
+        $event = new ColumnTransformEvent($tableName, $columnName, $columnValue, $expression);
         self::$dispatcher->dispatch(self::COLUMN_TRANSFORM_REQUEST, $event);
         if ($event->isReplacementSet()) {
             return $event->getReplacementValue();
