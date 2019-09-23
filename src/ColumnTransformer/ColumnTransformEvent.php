@@ -9,16 +9,18 @@ class ColumnTransformEvent extends Event
 {
     protected $table;
     protected $column;
+    protected $value;
     protected $expression;
     protected $isReplacementSet = FALSE;
     protected $replacementValue;
     /**
      * ColumnTransformEvent constructor.
      */
-    public function __construct($table, $column, $expression)
+    public function __construct($table, $column, $value, $expression)
     {
         $this->table = $table;
         $this->column = $column;
+        $this->value = $value;
         $this->expression = $expression;
     }
 
@@ -31,6 +33,11 @@ class ColumnTransformEvent extends Event
     public function getTable()
     {
         return $this->table;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
     }
 
     public function getColumn()

@@ -5,6 +5,7 @@ namespace machbarmacher\GdprDump\ColumnTransformer;
 
 use machbarmacher\GdprDump\ColumnTransformer\Plugins\ClearColumnTransformer;
 use machbarmacher\GdprDump\ColumnTransformer\Plugins\FakerColumnTransformer;
+use machbarmacher\GdprDump\ColumnTransformer\Plugins\VerbatimColumnTransformer;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 abstract class ColumnTransformer
@@ -30,6 +31,7 @@ abstract class ColumnTransformer
             self::$dispatcher = new EventDispatcher();
             self::addTransformer(new FakerColumnTransformer());
             self::addTransformer(new ClearColumnTransformer());
+            self::addTransformer(new VerbatimColumnTransformer());
         }
     }
 
