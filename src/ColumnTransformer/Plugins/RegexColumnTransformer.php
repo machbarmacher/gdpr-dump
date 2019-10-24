@@ -18,7 +18,6 @@ class RegexColumnTransformer extends ColumnTransformer
         $existing_column_value = $event->getValue();
         $regexes = $event->getExpression()['regexes'];
         foreach ($regexes as $regex_operation) {
-            error_log(print_r($regex_operation, TRUE));
             $existing_column_value = preg_replace($regex_operation['regex'], $regex_operation['replacement'], $existing_column_value);
         }
         return $existing_column_value;
