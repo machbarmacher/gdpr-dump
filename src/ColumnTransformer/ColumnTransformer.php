@@ -7,6 +7,7 @@ use machbarmacher\GdprDump\ColumnTransformer\Plugins\ClearColumnTransformer;
 use machbarmacher\GdprDump\ColumnTransformer\Plugins\FakerColumnTransformer;
 use machbarmacher\GdprDump\ColumnTransformer\Plugins\VerbatimColumnTransformer;
 use machbarmacher\GdprDump\ColumnTransformer\Plugins\RegexColumnTransformer;
+use machbarmacher\GdprDump\ColumnTransformer\Plugins\UniqueUserNameColumnTransformer;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 abstract class ColumnTransformer
@@ -34,6 +35,7 @@ abstract class ColumnTransformer
             self::addTransformer(new ClearColumnTransformer());
             self::addTransformer(new VerbatimColumnTransformer());
             self::addTransformer(new RegexColumnTransformer());
+            self::addTransformer(new UniqueUsernameColumnTransformer());
         }
     }
 
