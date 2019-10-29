@@ -181,6 +181,7 @@ class DumpCommand extends Command
                 'user',
                 'host',
                 'port',
+                'password',
                 'socket',
                 'db-name',
                 'db-type',
