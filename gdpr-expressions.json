@@ -1,0 +1,210 @@
+{
+    "activity": {
+        "message": {"formatter": "regex", "regexes":
+            [
+                {"regex": "/(<.*?>).*?(<\\/.*?>)/", "replacement": "$1XXXXX$2"},
+                {"regex": "/(pay rate for|invoice rate for|pay group for|invoice group for|charge method for|payment method for|actual start time for|actual end time for|the chargeable mileage for) (.*\\s+.*)\\s/i", "replacement": "$1 XXXXX XXXXX"},
+                {"regex": "/(by) .*?(on)/i", "replacement": "$1 XXXXX $2"},
+                {"regex": "/(was changed from) (.*) to (.*)/i", "replacement": "$1 XXXXXX to XXXXXX"},
+                {"regex": "/(was changed to) (.*)\\s/i", "replacement": "$1 XXXXXX "}
+            ]
+        }
+    },
+    "actual_times_received_extras": {
+        "value": {"formatter": "clear"}
+    },
+    "app_cp_log": {
+        "data": {"formatter": "clear"}
+    },
+    "app_cp_notes": {
+        "note": {"formatter": "text"}
+    },
+    "appointment_appointments": {
+        "notes": {"formatter": "text"},
+        "private_notes": {"formatter": "text"}
+    },
+    "appointment_archive": {
+        "notes": {"formatter": "text"},
+        "private_notes": {"formatter": "text"}
+    },
+    "appointment_instances": {
+        "notes": {"formatter": "text"},
+        "private_notes": {"formatter": "text"}
+    },
+    "appointment_regions": {
+        "name": {"formatter": "county"},
+        "address": {"formatter": "address"},
+        "email": {"formatter": "email"}
+    },
+    "availability": {
+        "notes": {"formatter": "text"}
+    },
+    "availability_archive": {
+        "notes": {"formatter": "text"}
+    },
+    "availability_profile": {
+        "notes": {"formatter": "text"}
+    },
+    "caretracker_message_log": {
+        "message": {"formatter": "text"}
+    },
+    "cm2000_data_received": {
+        "dump": {"formatter": "clear"}
+    },
+    "comment": {
+        "name": {"formatter": "name"}
+    },
+    "contacts": {
+        "forename": {"formatter": "firstName"},
+        "surname": {"formatter": "lastName"},
+        "address": {"formatter": "address"},
+        "postcode": {"formatter": "postcode"},
+        "home": {"formatter": "phoneNumber"},
+        "mobile": {"formatter": "mobileNumber"},
+        "work": {"formatter": "phoneNumber"},
+        "email": {"formatter": "email"},
+        "fax": {"formatter": "phoneNumber"},
+        "org_name": {"formatter": "company"},
+        "comments": {"formatter": "text"},
+        "additional_email": {"formatter": "email"}
+    },
+    "diary": {
+        "entry_body": {"formatter": "text"}
+    },
+    "diary_archive": {
+        "entry_body": {"formatter": "text"}
+    },
+    "email_addresses": {
+        "email": {"formatter": "email"}
+    },
+    "emailing_bounches": {
+        "email_address": {"formatter": "email"}
+    },
+    "emailing_log": {
+        "recipient_email": {"formatter": "email"},
+        "subject": {"formatter": "text"},
+        "body": {"formatter": "clear"}
+    },
+    "emailing_sets": {
+        "email": {"formatter": "clear"}
+    },
+    "field_data_comment_body": {
+        "comment_body_value": {"formatter": "clear"}
+    },
+    "field_revision_data_comment_body": {
+        "comment_body_value": {"formatter": "clear"}
+    },
+    "finance_export_customer_mappings": {
+        "accounts_package_customer_code": {"formatter": "word"},
+        "accounts_package_customer_code_description": {"formatter": "text"}
+    },
+    "finance_invoice_extras": {
+        "description": {"formatter": "word"}
+    },
+    "finance_invoice_extras_archive": {
+        "description": {"formatter": "word"}
+    },
+    "finance_organisations": {
+        "forename": {"formatter": "firstName"},
+        "surname": {"formatter": "lastName"},
+        "address": {"formatter": "address"},
+        "postcode": {"formatter": "postcode"},
+        "work": {"formatter": "phoneNumber"},
+        "mobile": {"formatter": "mobileNumber"},
+        "email": {"formatter": "email"}
+    },
+    "finance_organisations_archive": {
+        "forename": {"formatter": "firstName"},
+        "surname": {"formatter": "lastName"},
+        "address": {"formatter": "address"},
+        "postcode": {"formatter": "postcode"},
+        "work": {"formatter": "phoneNumber"},
+        "mobile": {"formatter": "mobileNumber"},
+        "email": {"formatter": "email"}
+    },
+    "human_resources": {
+        "notes": {"formatter": "text"},
+        "leaving_notes": {"formatter": "text"},
+        "dbs_number": {"formatter": "randomNumber"},
+        "national_insurance_number": {"formatter": "swiftBicNumber"},
+        "nhs_ref": {"formatter": "randomNumber"},
+        "payroll": {"formatter": "randomNumber"},
+        "social_services_ref": {"formatter": "swiftBicNumber"},
+        "financial_notes": {"formatter": "clear"},
+        "agent_ref": {"formatter": "clear"}
+    },
+    "login_details": {
+        "username": {"formatter": "name"},
+        "ip_address": {"formatter": "ipv4"},
+        "user_agent": {"formatter": "userAgent"}
+    },
+    "mar_charts_medication_client": {
+        "notes": {"formatter": "text"}
+    },
+    "mar_charts_medication_client_archive": {
+        "notes": {"formatter": "text"}
+    },
+    "mar_charts_medication_given": {
+        "response_notes": {"formatter": "text"}
+    },
+    "mar_charts_medication_given_archive": {
+        "response_notes": {"formatter": "text"}
+    },
+    "medication_notes": {
+        "notes": {"formatter": "text"}
+    },
+    "notices_cp": {
+        "subject": {"formatter": "text"},
+        "message": {"formatter": "text"}
+    },
+    "profile_value": {
+        "value": {"formatter": "clear"}
+    },
+    "respite": {
+        "notes": {"formatter": "text"}
+    },
+    "respite_archive": {
+        "notes": {"formatter": "text"}
+    },
+    "sms_track": {
+        "message": {"formatter": "text"}
+    },
+    "training": {
+        "notes": {"formatter": "text"}
+    },
+    "training_archive": {
+        "notes": {"formatter": "text"}
+    },
+    "user_communication_preferences": {
+        "invoice_address": {"formatter": "address"}
+    },
+    "user_fields": {
+        "forename": {"formatter": "firstName"},
+        "surname": {"formatter": "lastName"},
+        "address": {"formatter": "address"},
+        "mobile_number": {"formatter": "mobileNumber"},
+        "personal_phone_number": {"formatter": "mobileNumber"},
+        "landline_number": {"formatter": "phoneNumber"},
+        "postcode": {"formatter": "postcode"},
+        "preferred_alias": {"formatter": "firstName"},
+        "keysafe": {"formatter": "randomNumber"},
+        "entry_notes": {"formatter": "text"},
+        "middle_name": {"formatter": "firstName"}
+    },
+    "users": {
+        "name": {"formatter": "name", "conditions": [
+            {
+                "operator": "!=",
+                "comparand": "admin"
+            },
+            {
+                "operator": "!empty",
+                "comparand": null
+            }
+        ]
+        },
+        "mail": {"formatter": "email"},
+        "init": {"formatter": "email"}
+    }
+    
+}

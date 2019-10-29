@@ -44,13 +44,16 @@ class MysqldumpGdpr extends Mysqldump
         $this->setTransformColumnValueHook(
             function ($tableName, $colName, $colValue, $row) {
                 if (!empty($this->gdprReplacements[$tableName][$colName])) {
-                    $replacement = ColumnTransformer::replaceValue(
+                    if ($this->replacementConditionsMet($this->gdprReplacements[$tableName][$colName], $colValue)) {
+                        $replacement = ColumnTransformer::replaceValue(
                         $tableName,
                         $colName,
+                        $colValue,
                         $this->gdprReplacements[$tableName][$colName]
                     );
-                    if ($replacement !== false) {
-                        return $replacement;
+                        if ($replacement !== false) {
+                            return $replacement;
+                        }
                     }
                 }
 
@@ -79,5 +82,65 @@ class MysqldumpGdpr extends Mysqldump
         }
 
         return $columnStmt;
+    }
+
+    /**
+     * Check if any conditions are set for a replacement.
+     * 
+     * If conditions are present, return TRUE if they are met, or FALSE if any
+     * one of them is not met.
+     *
+     * @param [array] $replacement_details Array of replacement information
+     *  taken from gdpr_replacements JSON file.
+     * @param mixed $current_value Current value of column
+     * @return bool
+     */
+    private function replacementConditionsMet($replacement_details, $current_value) {
+        
+        // Early bailout
+        if (empty($replacement_details['conditions'])) {
+            return TRUE;
+        }
+
+        $evaluation = FALSE;
+
+        foreach ($replacement_details['conditions'] as $condition) {
+            $comparand = $condition['comparand'];
+            $operator = $condition['operator'];
+            switch ($operator) {
+                case '=':
+                $evaluation = $comparand == $current_value;
+                break;
+
+                case '!=':
+                $evaluation = $comparand != $current_value;
+                break;
+
+                case 'empty':
+                $evaluation = empty($current_value);
+                break;
+
+                case '!empty':
+                $evaluation = !empty($current_value);
+                break;
+
+                case '<';
+                $evaluation = $current_value < $comparand;
+                break;
+
+                case '>';
+                $evaluation = $current_value > $comparand;
+                break;
+
+                default:
+                throw new Exception('Unsupported operand: ' . $operator);
+                break;
+            }
+            
+            if ($evaluation === FALSE) {
+                return FALSE;
+            }
+        }
+        return $evaluation;
     }
 }
