@@ -192,7 +192,17 @@
         "middle_name": {"formatter": "firstName"}
     },
     "users": {
-        "name": {"formatter": "md5"},
+        "name": {"formatter": "name", "conditions": [
+            {
+                "operator": "!=",
+                "comparand": "admin"
+            },
+            {
+                "operator": "!empty",
+                "comparand": null
+            }
+        ]
+        },
         "mail": {"formatter": "email"},
         "init": {"formatter": "email"}
     }
