@@ -39,7 +39,49 @@ class MysqldumpGdpr extends Mysqldump
             $this->debugSql = $dumpSettings['debug-sql'];
             unset($dumpSettings['debug-sql']);
         }
+
+        $this->setTransformTableRowHook(function ($tableName, array $row) {
+          foreach ($row AS $colName => $colValue) {
+            $excludeRow = self::excludeRowCheck($row, $tableName, $colName);
+            if (!$excludeRow) {
+              $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
+              if ($replacement !== FALSE) {
+                $row[$colName] = $replacement;
+              }
+            }
+          }
+          return $row;
+        });
+
         parent::__construct($dsn, $user, $pass, $dumpSettings, $pdoSettings);
+    }
+
+    private function excludeRowCheck($row, $tableName, $colName) {
+      $table_exludes = $this->gdprReplacements[$tableName]['_exclude'];
+
+      if (!empty($this->gdprReplacements[$tableName][$colName])) {
+        foreach ($row as $row_column_name => $row_column_value) {
+          if ($table_exludes[$row_column_name]) {
+
+            // Check for direct matches.
+            if (in_array($row_column_value, $table_exludes[$row_column_name])) {
+              return TRUE;
+            }
+
+            // Check for partial matches.
+            foreach ($table_exludes[$row_column_name] AS $value_to_ignore) {
+              if (strpos($value_to_ignore, '*') !== FALSE) {
+                $stripped_value_to_ignore = str_replace('*', '', $value_to_ignore);
+                if (strpos($row_column_value, $stripped_value_to_ignore) !== FALSE) {
+                  return TRUE;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      return FALSE;
     }
 
     public function getColumnStmt($tableName)
@@ -59,17 +101,6 @@ class MysqldumpGdpr extends Mysqldump
             }
         }
         return $columnStmt;
-    }
-
-    protected function hookTransformColumnValue($tableName, $colName, $colValue)
-    {
-        if (!empty($this->gdprReplacements[$tableName][$colName])) {
-            $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
-            if($replacement !== FALSE) {
-                return $replacement;
-            }
-        }
-        return $colValue;
     }
 
 }
