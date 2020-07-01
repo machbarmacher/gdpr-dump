@@ -1,5 +1,5 @@
 {
-  "name": "machbarmacher/gdpr-dump",
+  "name": "uncinc/gdpr-dump",
   "description": "A drop-in replacement for mysqldump that optionally sanitizes DB fields for better GDPR conformity.",
   "require": {
     "symfony/console": "^3.0",
@@ -11,6 +11,10 @@
   },
   "license": "GPL-2.0-or-later",
   "authors": [
+    {
+      "name": "Nico de Groot",
+      "email": "nico@uncinc.nl"
+    },
     {
       "name": "Axel Rutz",
       "email": "axel.rutz@machbarmacher.net"
