@@ -106,3 +106,10 @@ Here we might need better options.
 ## Contributors notes
 
 * Note that the project follows [PSR-2](https://www.php-fig.org/psr/psr-2/) for formatting. 
+
+## Usage for CarePlanner
+
+```
+./mysqldump --user root --password --host host.co.uk --port 3306 --routines --gdpr-replacements-file ./gdpr-expressions.json CP2_anon > CP2_anon_anon.sql
+
+```
