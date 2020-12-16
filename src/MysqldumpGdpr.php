@@ -15,6 +15,9 @@ class MysqldumpGdpr extends Mysqldump
     /** @var [string][string]string */
     protected $gdprReplacements;
 
+    /** @var string */
+    protected $gdprReplacementsLocale;
+
     /** @var bool */
     protected $debugSql;
 
@@ -33,6 +36,11 @@ class MysqldumpGdpr extends Mysqldump
         if (array_key_exists('gdpr-replacements', $dumpSettings)) {
             $this->gdprReplacements = $dumpSettings['gdpr-replacements'];
             unset($dumpSettings['gdpr-replacements']);
+        }
+
+        if (array_key_exists('gdpr-replacements-locale', $dumpSettings)) {
+            $this->gdprReplacementsLocale = $dumpSettings['gdpr-replacements-locale'];
+            unset($dumpSettings['gdpr-replacements-locale']);
         }
 
         if (array_key_exists('debug-sql', $dumpSettings)) {
@@ -64,7 +72,7 @@ class MysqldumpGdpr extends Mysqldump
     protected function hookTransformColumnValue($tableName, $colName, $colValue)
     {
         if (!empty($this->gdprReplacements[$tableName][$colName])) {
-            $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
+            $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName], $this->gdprReplacementsLocale);
             if($replacement !== FALSE) {
                 return $replacement;
             }
