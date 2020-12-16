@@ -20,22 +20,22 @@ abstract class ColumnTransformer
     protected static $dispatcher;
 
 
-    public static function setUp()
+    public static function setUp($locale)
     {
         if (!isset(self::$dispatcher)) {
             self::$dispatcher = new EventDispatcher();
 
             self::$dispatcher->addListener(self::COLUMN_TRANSFORM_REQUEST,
-              new FakerColumnTransformer());
+              new FakerColumnTransformer($locale));
             self::$dispatcher->addListener(self::COLUMN_TRANSFORM_REQUEST,
               new ClearColumnTransformer());
         }
 
     }
 
-    public static function replaceValue($tableName, $columnName, $expression)
+    public static function replaceValue($tableName, $columnName, $expression, $locale)
     {
-        self::setUp();
+        self::setUp($locale);
         $event = new ColumnTransformEvent($tableName, $columnName, $expression);
         self::$dispatcher->dispatch(self::COLUMN_TRANSFORM_REQUEST, $event);
         if ($event->isReplacementSet()) {
