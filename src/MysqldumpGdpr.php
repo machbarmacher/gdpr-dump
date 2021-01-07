@@ -86,7 +86,7 @@ class MysqldumpGdpr extends Mysqldump
 
     /**
      * Check if any conditions are set for a replacement.
-     * 
+     *
      * If conditions are present, return TRUE if they are met, or FALSE if any
      * one of them is not met.
      *
@@ -96,7 +96,7 @@ class MysqldumpGdpr extends Mysqldump
      * @return bool
      */
     private function replacementConditionsMet($replacement_details, $current_value) {
-        
+
         // Early bailout
         if (empty($replacement_details['conditions'])) {
             return TRUE;
@@ -133,10 +133,10 @@ class MysqldumpGdpr extends Mysqldump
                 break;
 
                 default:
-                throw new Exception('Unsupported operand: ' . $operator);
+                throw new \Exception('Unsupported operand: ' . $operator);
                 break;
             }
-            
+
             if ($evaluation === FALSE) {
                 return FALSE;
             }
