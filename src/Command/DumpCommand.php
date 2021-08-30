@@ -111,6 +111,8 @@ class DumpCommand extends Command
                 'File that contains a json of gdpr replacement values keyed by table and column.')
             ->addOption('debug-sql', null, InputOption::VALUE_NONE,
                 'Add a comment with the dump sql.')
+            ->addOption('locale', null, InputOption::VALUE_OPTIONAL,
+            'The wanted locale for the export.')
             // This seems NOT to work as documented.
             //->addOption('databases', NULL, InputOption::VALUE_OPTIONAL|InputOption::VALUE_IS_ARRAY, 'Dump several databases. Normally, mysqldump treats the first name argument on the command line as a database name and following names as table names. With this option, it treats all name arguments as database names.')
             // Add some options that e.g. drush expects.
@@ -372,6 +374,7 @@ class DumpCommand extends Command
                 'gdpr-expressions' => null,
                 'gdpr-replacements' => null,
                 'debug-sql' => false,
+                'locale' => "en_US",
             ];
     }
 

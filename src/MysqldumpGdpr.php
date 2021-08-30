@@ -18,6 +18,9 @@ class MysqldumpGdpr extends Mysqldump
     /** @var bool */
     protected $debugSql;
 
+    /** @var string */
+    protected $locale = 'en_EN';
+
     public function __construct(
         $dsn = '',
         $user = '',
@@ -40,11 +43,16 @@ class MysqldumpGdpr extends Mysqldump
             unset($dumpSettings['debug-sql']);
         }
 
+        if (array_key_exists('locale', $dumpSettings)) {
+          $this->locale = $dumpSettings['locale'];
+          unset($dumpSettings['locale']);
+        }
+
         $this->setTransformTableRowHook(function ($tableName, array $row) {
           foreach ($row AS $colName => $colValue) {
             $excludeRow = self::excludeRowCheck($row, $tableName, $colName);
             if (!$excludeRow) {
-              $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName]);
+              $replacement = ColumnTransformer::replaceValue($tableName, $colName, $this->gdprReplacements[$tableName][$colName], $this->locale);
               if ($replacement !== FALSE) {
                 $row[$colName] = $replacement;
               }
