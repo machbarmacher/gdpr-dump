@@ -26,10 +26,10 @@ class FakerColumnTransformer extends ColumnTransformer
         return array_keys(self::$formatterTansformerMap);
     }
 
-    public function __construct()
+    public function __construct($locale)
     {
         if (!isset(self::$generator)) {
-            self::$generator = Factory::create();
+            self::$generator = Factory::create($locale);
             foreach(self::$generator->getProviders() as $provider)
             {
                 $clazz = new \ReflectionClass($provider);
