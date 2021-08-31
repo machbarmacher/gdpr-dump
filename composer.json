@@ -5,7 +5,7 @@
     "symfony/console": "^3.0 || ^4",
     "ifsnop/mysqldump-php": "dev-master",
     "cweagans/composer-patches": "^1.6",
-    "bomoko/mysql-cnf-parser": "dev-master",
+    "bomoko/mysql-cnf-parser": "~2.0",
     "fzaninotto/faker": "^1.7",
     "symfony/event-dispatcher": "~3.4|~4.0"
   },
